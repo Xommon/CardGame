@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
-  m_Name: Pikachu
+  m_Name: Dratini
   m_EditorClassIdentifier: 
-  type: Electric
+  type: Dragon
   cry: {fileID: 0}
-  sprite: {fileID: -145673813617042396, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  sprite: {fileID: 8070120046625994482, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  background: {fileID: -5222788323760576981, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}
-  attack: 2
-  health: 1
-  energy: 2
-  ability: Paralyse
+  attack: 3
+  health: 3
+  energy: 4
+  ability: 

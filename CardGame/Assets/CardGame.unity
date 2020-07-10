@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aef9db880a374894f861113e6b9533d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 11400000, guid: edb87239b75fe95449a8546690809e29, type: 2}
+  card: {fileID: 11400000, guid: eacbe36e6795fbe4cb1a2ed10a12ce62, type: 2}
   nameText: {fileID: 1401150984}
   typeImage: {fileID: 1825527067}
   typeSpriteSheet: {fileID: 2800000, guid: 42b866d6ee5dd6448a60a29e33935096, type: 3}

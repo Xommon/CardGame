@@ -14,12 +14,14 @@ public class Card : ScriptableObject
     public int health;
     public int energy;
     public string ability;
-    /*static;
-    toxic;
-    protect;
-    quick;
-    guard;
-    disable;
-    explode;
-    heal;*/
+    /*paralyse
+    toxic
+    protect
+    quick
+    guard
+    disable
+    explode
+    heal
+    transform
+    convert*/
 }
