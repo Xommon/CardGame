@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 
 public class CardFace : MonoBehaviour
 {
@@ -9,7 +11,7 @@ public class CardFace : MonoBehaviour
     public TextMesh nameText;
     public TextMesh typeText;
     public AudioClip cryAudio;
-    public Sprite cardImage;
+    public Image cardImage;
     public TextMesh attackText;
     public TextMesh healthText;
     public TextMesh energyText;
@@ -17,10 +19,11 @@ public class CardFace : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        nameText.text = card.name;
+        // Values to appear on the card's face
+        nameText.text = Path.GetFileName("Assets/Cards/" + card.ToString().Substring(0, card.name.Length));
         typeText.text = card.type;
         cryAudio = card.cry;
-        cardImage = card.image;
+        cardImage.sprite = card.sprite;
         attackText.text = card.attack.ToString();
         healthText.text = card.health.ToString();
         energyText.text = card.energy.ToString();
