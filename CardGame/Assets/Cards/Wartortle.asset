@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Water
   cry: {fileID: 0}
-  sprite: {fileID: 1176816032846386199, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  sprite: {fileID: -4723553396410307753, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+    type: 3}
   attack: 4
   health: 4
   energy: 4
+  ability: 

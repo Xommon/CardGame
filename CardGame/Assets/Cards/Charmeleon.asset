@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Fire
   cry: {fileID: 0}
-  sprite: {fileID: -5920089530496084169, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  sprite: {fileID: 6572310444500722904, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+    type: 3}
   attack: 5
   health: 3
   energy: 4
+  ability: 

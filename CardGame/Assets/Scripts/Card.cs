@@ -9,7 +9,17 @@ public class Card : ScriptableObject
     public string type;
     public AudioClip cry;
     public Sprite sprite;
+    public Sprite background;
     public int attack;
     public int health;
     public int energy;
+    public string ability;
+    /*static;
+    toxic;
+    protect;
+    quick;
+    guard;
+    disable;
+    explode;
+    heal;*/
 }

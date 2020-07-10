@@ -15,6 +15,9 @@ MonoBehaviour:
   type: Grass
   cry: {fileID: 0}
   sprite: {fileID: -2342499992103388885, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
+  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+    type: 3}
   attack: 5
   health: 7
   energy: 7
+  ability: 
