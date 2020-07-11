@@ -22,3 +22,4 @@ MonoBehaviour:
   health: 8
   energy: 9
   ability: 
+  legendary: 1
