@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
-  m_Name: Gengar
+  m_Name: Bulbasaur
   m_EditorClassIdentifier: 
   type: Ghost
   cry: {fileID: 0}
@@ -22,3 +22,4 @@ MonoBehaviour:
   health: 4
   energy: 6
   ability: Guard
+  legendary: 0

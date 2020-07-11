@@ -22,11 +22,11 @@ public class CardFace : MonoBehaviour
     public TextMeshProUGUI energyText;
 
     // Start is called before the first frame update
-    void Start()
+    void Update()
     {
         // Separate Pokemon types sprites into array from spritesheet then assign the correct type sprite to the card
         Sprite[] sprites = Resources.LoadAll<Sprite>(typeSpriteSheet.name);
-        for (int i = 0; i < sprites.Length - 1; i++)
+        for (int i = 0; i < sprites.Length; i++)
         {
             if (sprites[i].name == card.type)
             {

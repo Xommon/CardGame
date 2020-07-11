@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using System.IO;
 
-public class PokemonEntry : MonoBehaviour
+public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
 {
     public GameObject associatedPokemon;
     public new string name;
@@ -14,6 +17,7 @@ public class PokemonEntry : MonoBehaviour
     public GameObject thisEntryName;
     public GameObject thisEntryCount;
     public GameObject thisHighlight;
+    public GameObject cardDisplay;
     public int index;
     public bool legendary;
 
@@ -32,6 +36,9 @@ public class PokemonEntry : MonoBehaviour
 
         // Attach card object to the Pokemon entry
         associatedPokemon = GameObject.Find(name);
+
+        // Attach the card for display
+        cardDisplay = GameObject.Find("CardDisplay");
     }
 
     private void Update()
@@ -39,5 +46,12 @@ public class PokemonEntry : MonoBehaviour
         // Assign values to the text fields
         thisEntryName.GetComponent<TextMeshProUGUI>().text = name;
         thisEntryCount.GetComponent<TextMeshProUGUI>().text = currentQuantity + "/" + maxQuantity;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        cardDisplay.GetComponent<CardFace>().card = Object.FindObjectOfType<GameManager>().allCards[index];
+            //Path.GetFileName("Assets/Cards/" + card.ToString().Substring(0, card.name.Length))
+        //cardDisplay.GetComponent<CardFace>().card = associatedPokemon.GetComponent<CardFace>().card;
     }
 }
