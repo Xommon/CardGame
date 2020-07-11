@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Normal
   cry: {fileID: 0}
+  dexNumber: 53
   sprite: {fileID: -2387149740149657207, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 4544235448077845365, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Fighting
   cry: {fileID: 0}
+  dexNumber: 66
   sprite: {fileID: 3499123220765962000, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 6930656735175103713, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

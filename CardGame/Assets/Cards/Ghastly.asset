@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Ghost
   cry: {fileID: 0}
+  dexNumber: 92
   sprite: {fileID: -2511897499890690695, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 2722116166563082487, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

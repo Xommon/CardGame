@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Rock
   cry: {fileID: 0}
+  dexNumber: 138
   sprite: {fileID: -2844061186188134473, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 6172491537803308644, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

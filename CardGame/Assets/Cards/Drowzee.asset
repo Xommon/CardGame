@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Psychic
   cry: {fileID: 0}
+  dexNumber: 96
   sprite: {fileID: 1703209699500756917, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 5392773386914483470, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Fire
   cry: {fileID: 0}
+  dexNumber: 6
   sprite: {fileID: -4199439238537012338, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

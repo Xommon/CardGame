@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Electric
   cry: {fileID: 0}
+  dexNumber: 26
   sprite: {fileID: 9055516621766473722, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}

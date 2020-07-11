@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Grass
   cry: {fileID: 0}
+  dexNumber: 46
   sprite: {fileID: 7854770543471895620, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 5392773386914483470, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}
