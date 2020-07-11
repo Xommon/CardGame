@@ -7,6 +7,8 @@ using UnityEditor;
 public class Card : ScriptableObject
 {
     public string type;
+    public string weaknessType;
+    public string resistanceType;
     public AudioClip cry;
     public int dexNumber;
     public Sprite sprite;

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.IO;
+using UnityEngine.UI;
 
 public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
 {
@@ -18,6 +19,9 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
     public GameObject thisEntryCount;
     public GameObject thisHighlight;
     public GameObject cardDisplay;
+    public Image weaknessDisplay;
+    public Image resistanceDisplay;
+    public Texture2D typeSpriteSheet;
     public int index;
     public bool legendary;
 
@@ -39,6 +43,9 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
 
         // Attach the card for display
         cardDisplay = GameObject.Find("CardDisplay");
+
+        // Attach spritesheet for typing
+        typeSpriteSheet = cardDisplay.GetComponent<CardFace>().typeSpriteSheet;
     }
 
     private void Update()
@@ -46,12 +53,47 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
         // Assign values to the text fields
         thisEntryName.GetComponent<TextMeshProUGUI>().text = name;
         thisEntryCount.GetComponent<TextMeshProUGUI>().text = currentQuantity + "/" + maxQuantity;
+
+        // Separate Pokemon types sprites into array from spritesheet, then display the correct weakness and resistance
+        Sprite[] sprites = Resources.LoadAll<Sprite>(typeSpriteSheet.name);
+        Debug.Log(cardDisplay.GetComponent<CardFace>().card.weaknessType + "/" + cardDisplay.GetComponent<CardFace>().card.resistanceType);
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (cardDisplay.GetComponent<CardFace>().weaknessType != "")
+            {
+                weaknessDisplay.color = new Color(255, 255, 255, 1);
+                if (sprites[i].name == cardDisplay.GetComponent<CardFace>().weaknessType)
+                {
+                    weaknessDisplay.sprite = sprites[i];
+                    break;
+                }
+            }
+            else
+            {
+                weaknessDisplay.color = new Color(255, 255, 255, 0);
+            }
+        }
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (cardDisplay.GetComponent<CardFace>().resistanceType != "")
+            {
+                resistanceDisplay.color = new Color(255, 255, 255, 1);
+                if (sprites[i].name == cardDisplay.GetComponent<CardFace>().resistanceType)
+                {
+                    resistanceDisplay.sprite = sprites[i];
+                    break;
+                }
+            }
+            else
+            {
+                resistanceDisplay.color = new Color(255, 255, 255, 0);
+            }
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        // Display card
         cardDisplay.GetComponent<CardFace>().card = Object.FindObjectOfType<GameManager>().allCards[index];
-            //Path.GetFileName("Assets/Cards/" + card.ToString().Substring(0, card.name.Length))
-        //cardDisplay.GetComponent<CardFace>().card = associatedPokemon.GetComponent<CardFace>().card;
     }
 }
