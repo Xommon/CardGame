@@ -119,35 +119,13 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
     public void AddCard()
     {
         currentQuantity += 1;
-        if (currentDeck == 1)
-        {
-            FindObjectOfType<GameManager>().deck1.Add(cardDisplay.GetComponent<CardFace>().card);
-        }
-        else if (currentDeck == 2)
-        {
-            FindObjectOfType<GameManager>().deck2.Add(cardDisplay.GetComponent<CardFace>().card);
-        }
-        else if (currentDeck == 3)
-        {
-            FindObjectOfType<GameManager>().deck3.Add(cardDisplay.GetComponent<CardFace>().card);
-        }
+        FindObjectOfType<GameManager>().tempDeck.Add(cardDisplay.GetComponent<CardFace>().card);
     }
 
     public void RemoveCard()
     {
         currentQuantity -= 1;
-        if (currentDeck == 1)
-        {
-            FindObjectOfType<GameManager>().deck1.Remove(cardDisplay.GetComponent<CardFace>().card);
-        }
-        else if (currentDeck == 2)
-        {
-            FindObjectOfType<GameManager>().deck2.Remove(cardDisplay.GetComponent<CardFace>().card);
-        }
-        else if (currentDeck == 3)
-        {
-            FindObjectOfType<GameManager>().deck3.Remove(cardDisplay.GetComponent<CardFace>().card);
-        }
+        FindObjectOfType<GameManager>().tempDeck.Remove(cardDisplay.GetComponent<CardFace>().card);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -8,9 +8,12 @@ public class SaveData : MonoBehaviour
 {
     /// Variables to be saved ///
     // Decks
-    public int[] deck1 = new int[30];
-    public int[] deck2 = new int[30];
-    public int[] deck3 = new int[30];
+    public string deck1Name;
+    public string deck2Name;
+    public string deck3Name;
+    public string[] deck1 = new string[30];
+    public string[] deck2 = new string[30];
+    public string[] deck3 = new string[30];
     public int currentDeck;
 
     // Custom Card 1
@@ -39,36 +42,37 @@ public class SaveData : MonoBehaviour
     public string customCard3_Ability;
     public int customCard3_Background;
     public int customCard3_PokemonImage;
-
+    
     public SaveData (GameManager gameManager)
     {
-        // Deconstruct the existing decks down to their dex numbers to be saved
-        for (int i = 0; i < 30; i++)
+        // Save deck names
+        deck1Name = gameManager.deck1Name;
+        deck2Name = gameManager.deck2Name;
+        deck3Name = gameManager.deck3Name;
+
+        // Deconstruct the existing decks down to their Pokemon names to be saved
+        if (gameManager.deck1.Count == 30)
         {
-            if (deck1.Length != 0)
+            for (int i = 0; i < 30; i++)
             {
-                deck1[i] = gameManager.deck1[i].dexNumber;
-            }
-            if (deck2.Length != 0)
-            {
-                deck2[i] = gameManager.deck2[i].dexNumber;
-            }
-            if (deck3.Length != 0)
-            {
-                deck3[i] = gameManager.deck3[i].dexNumber;
+                deck1[i] = gameManager.deck1[i].name;
             }
         }
-    }
+        if (gameManager.deck2.Count == 30)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                deck2[i] = gameManager.deck2[i].name;
+            }
+        }
+        if (gameManager.deck3.Count == 30)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                deck3[i] = gameManager.deck3[i].name;
+            }
+        }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        currentDeck = gameManager.currentDeck;
     }
 }

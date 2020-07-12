@@ -11,11 +11,16 @@ public class GameManager : MonoBehaviour
 {
     // Decks and Cards
     public List<Card> allCards = new List<Card>();
+    public string deck1Name;
+    public string deck2Name;
+    public string deck3Name;
     public List<Card> deck1 = new List<Card>();
     public List<Card> deck2 = new List<Card>();
     public List<Card> deck3 = new List<Card>();
+    public List<Card> tempDeck = new List<Card>();
     public Card newCustomCard;
     public int currentDeck;
+    public int editingDeck;
 
     // Menus
     public GameObject mainMenu;
@@ -31,6 +36,20 @@ public class GameManager : MonoBehaviour
     public GameObject createADeckSaveButton;
     public GameObject createADeckScrollArea;
     public GameObject createADeckAmountOfCardsDisplay;
+    public TextMeshProUGUI createADeck_DeckNameEntry;
+    public TextMeshProUGUI deckManager_Deck1Name;
+    public TextMeshProUGUI deckManager_Deck2Name;
+    public TextMeshProUGUI deckManager_Deck3Name;
+    public GameObject deckManager_Deck1Cardback;
+    public GameObject deckManager_Deck2Cardback;
+    public GameObject deckManager_Deck3Cardback;
+    public Button deckManager_Deck1EditButton;
+    public Button deckManager_Deck2EditButton;
+    public Button deckManager_Deck3EditButton;
+    public GameObject deckManager_Deck1CurrentDeck;
+    public GameObject deckManager_Deck2CurrentDeck;
+    public GameObject deckManager_Deck3CurrentDeck;
+    public GameObject deckManager_BackButton;
 
     // Custom Card 1
     public string customCard1_Name;
@@ -68,6 +87,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Load save data
+        //LoadData();
+
         // If no decks have been created, then it's the player's first time playing. Open the deck creation menu.
         if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
         {
@@ -87,73 +109,163 @@ public class GameManager : MonoBehaviour
         // Disable the save button in Create-a-Deck mode until the deck has 30 cards
         if (createADeckMenu.activeInHierarchy == true)
         {
-            if (currentDeck == 1)
+            if (tempDeck.Count != 30)
             {
-                if (deck1.Count != 30)
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = false;
-                }
-                else
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = true;
-                }
+                createADeckSaveButton.GetComponent<Button>().interactable = false;
             }
-            else if (currentDeck == 2)
+            else
             {
-                if (deck2.Count != 30)
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = false;
-                }
-                else
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = true;
-                }
-            }
-            if (currentDeck == 3)
-            {
-                if (deck3.Count != 30)
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = false;
-                }
-                else
-                {
-                    createADeckSaveButton.GetComponent<Button>().interactable = true;
-                }
+                createADeckSaveButton.GetComponent<Button>().interactable = true;
             }
         }
 
         // Update the amount of cards in the deck
-        if (currentDeck == 1)
+        createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = tempDeck.Count + " / 30";
+
+        // Show current deck if deck manager window is open
+        if (deckMenu.activeInHierarchy)
         {
-            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck1.Count + " / 30";
+            if (currentDeck == 2)
+            {
+                deckManager_Deck1CurrentDeck.SetActive(false);
+                deckManager_Deck2CurrentDeck.SetActive(true);
+                deckManager_Deck3CurrentDeck.SetActive(false);
+            }
+            else if (currentDeck == 3)
+            {
+                deckManager_Deck1CurrentDeck.SetActive(false);
+                deckManager_Deck2CurrentDeck.SetActive(false);
+                deckManager_Deck3CurrentDeck.SetActive(true);
+            }
+            else
+            {
+                deckManager_Deck1CurrentDeck.SetActive(true);
+                deckManager_Deck2CurrentDeck.SetActive(false);
+                deckManager_Deck3CurrentDeck.SetActive(false);
+            }
         }
-        else if (currentDeck == 2)
+
+        // If a deck exists, set up all of the display options
+        if (deckMenu.activeInHierarchy)
         {
-            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck2.Count + " / 30";
+            if (deck1.Count != 30)
+            {
+                deckManager_Deck1Cardback.SetActive(false);
+                deckManager_Deck1EditButton.interactable = false;
+                deckManager_Deck1Name.text = "New Deck";
+            }
+            else
+            {
+                deckManager_Deck1Cardback.SetActive(true);
+                deckManager_Deck1EditButton.interactable = true;
+                deckManager_Deck1Name.text = deck1Name;
+            }
+
+            if (deck2.Count != 30)
+            {
+                deckManager_Deck2Cardback.SetActive(false);
+                deckManager_Deck2EditButton.interactable = false;
+                deckManager_Deck2Name.text = "New Deck";
+            }
+            else
+            {
+                deckManager_Deck2Cardback.SetActive(true);
+                deckManager_Deck2EditButton.interactable = true;
+                deckManager_Deck2Name.text = deck2Name;
+            }
+
+            if (deck3.Count != 30)
+            {
+                deckManager_Deck3Cardback.SetActive(false);
+                deckManager_Deck3EditButton.interactable = false;
+                deckManager_Deck3Name.text = "New Deck";
+            }
+            else
+            {
+                deckManager_Deck3Cardback.SetActive(true);
+                deckManager_Deck3EditButton.interactable = true;
+                deckManager_Deck3Name.text = deck3Name;
+            }
         }
-        else if (currentDeck == 3)
+    }
+
+    public void SelectDeck1()
+    {
+        if (deck1.Count == 30)
         {
-            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck3.Count + " / 30";
+            currentDeck = 1;
+        }
+        else
+        {
+            CreateDeck1();
+        }
+    }
+
+    public void SelectDeck2()
+    {
+        if (deck2.Count == 30)
+        {
+            currentDeck = 2;
+        }
+        else
+        {
+            CreateDeck2();
+        }
+    }
+
+    public void SelectDeck3()
+    {
+        if (deck3.Count == 30)
+        {
+            currentDeck = 3;
+        }
+        else
+        {
+            CreateDeck3();
         }
     }
 
     public void CreateDeck1()
     {
-        // Set the current deck
-        currentDeck = 1;
+        // Set Editing Deck
+        editingDeck = 1;
+
+        // Clear past card displays
+        for (int i = 0; i < allCards.Count - 1; i++)
+        {
+            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+        }
 
         // Load current deck if it has already been made
         if (deck1.Count == 30)
         {
+            // Load individual cards
             for (int i = 0; i < 30; i++)
             {
-                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck1[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1; ;
+                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck1[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
+            }
+
+            // Convert real deck to temp deck until the player is ready to save
+            tempDeck.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                tempDeck.Add(deck1[i]);
             }
         }
 
         // Open the Create-a-Deck window
         deckMenu.SetActive(false);
         createADeckMenu.SetActive(true);
+
+        // Set up deck name
+        if (deck1.Count == 30)
+        {
+            createADeck_DeckNameEntry.text = deck1Name;
+        }
+        else
+        {
+            createADeck_DeckNameEntry.text = "";
+        }
 
         // Disable the cancel button if this is the first deck being made
         if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
@@ -188,9 +300,247 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void CreateDeck2()
+    {
+        // Set Editing Deck
+        editingDeck = 2;
+        
+        // Clear past card displays
+        for (int i = 0; i < allCards.Count - 1; i++)
+        {
+            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+        }
+
+        // Load current deck if it has already been made
+        if (deck2.Count == 30)
+        {
+            // Load individual cards
+            for (int i = 0; i < 30; i++)
+            {
+                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck2[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
+            }
+
+            // Convert real deck to temp deck until the player is ready to save
+            tempDeck.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                tempDeck.Add(deck2[i]);
+            }
+        }
+
+        // Open the Create-a-Deck window
+        deckMenu.SetActive(false);
+        createADeckMenu.SetActive(true);
+
+        // Set up deck name
+        if (deck2.Count == 30)
+        {
+            createADeck_DeckNameEntry.text = deck2Name;
+        }
+        else
+        {
+            createADeck_DeckNameEntry.text = "";
+        }
+
+        // Disable the cancel button if this is the first deck being made
+        if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
+        {
+            createADeckCancelButton.GetComponent<Button>().interactable = false;
+        }
+
+        // Populate the database with all of the cards
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            // Address the specific PokemonEntry
+            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
+
+            // Assign the next Pokemon on the list to the entry field
+            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
+
+            // Define wether the card field is legendary or not
+            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
+
+            // Limit legendary cards to one of each kind per deck
+            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
+            }
+            else
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
+            }
+
+            // Pass on the index number
+            newEntry.GetComponent<PokemonEntry>().index = i;
+        }
+    }
+
+    public void CreateDeck3()
+    {
+        // Set Editing Deck
+        editingDeck = 3;
+
+        // Clear past card displays
+        for (int i = 0; i < allCards.Count - 1; i++)
+        {
+            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+        }
+
+        // Load current deck if it has already been made
+        if (deck3.Count == 30)
+        {
+            // Load individual cards
+            for (int i = 0; i < 30; i++)
+            {
+                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck3[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
+            }
+
+            // Convert real deck to temp deck until the player is ready to save
+            tempDeck.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                tempDeck.Add(deck3[i]);
+            }
+        }
+
+        // Open the Create-a-Deck window
+        deckMenu.SetActive(false);
+        createADeckMenu.SetActive(true);
+
+        // Set up deck name
+        if (deck3.Count == 30)
+        {
+            createADeck_DeckNameEntry.text = deck3Name;
+        }
+        else
+        {
+            createADeck_DeckNameEntry.text = "";
+        }
+
+        // Disable the cancel button if this is the first deck being made
+        if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
+        {
+            createADeckCancelButton.GetComponent<Button>().interactable = false;
+        }
+
+        // Populate the database with all of the cards
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            // Address the specific PokemonEntry
+            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
+
+            // Assign the next Pokemon on the list to the entry field
+            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
+
+            // Define wether the card field is legendary or not
+            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
+
+            // Limit legendary cards to one of each kind per deck
+            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
+            }
+            else
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
+            }
+
+            // Pass on the index number
+            newEntry.GetComponent<PokemonEntry>().index = i;
+        }
+    }
+
+    public void SaveData()
+    {
+        SaveSystem.SaveGame(this);
+    }
+
+    public void LoadData()
+    {
+        SaveData data = SaveSystem.LoadData();
+
+        // Reconstruct the decks if they were built previously
+        if (data.deck1[0] != "")
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                deck1.Add(FindCardByName(data.deck1[i]));
+            }
+        }
+        if (data.deck2[0] != "")
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                deck2.Add(FindCardByName(data.deck2[i]));
+            }
+        }
+        if (data.deck3[0] != "")
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                deck3.Add(FindCardByName(data.deck3[i]));
+            }
+        }
+    }
+
+    public Card FindCardByName(string name)
+    {
+        return Resources.Load("Assets/Cards/" + name) as Card;
+    }
+
     public void OpenDeckManager()
     {
+        // Enable window
         mainMenu.SetActive(false);
         deckMenu.SetActive(true);
+    }
+
+    public void CreateADeck_SaveButton()
+    {
+        // Convert temp deck back into a real deck
+        if (editingDeck == 1)
+        {
+            deck1Name = createADeck_DeckNameEntry.text;
+            deck1.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                deck1.Add(tempDeck[i]);
+            }
+        }
+        else if (editingDeck == 2)
+        {
+            deck2Name = createADeck_DeckNameEntry.text;
+            deck2.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                deck2.Add(tempDeck[i]);
+            }
+        }
+        else if (editingDeck == 3)
+        {
+            deck3Name = createADeck_DeckNameEntry.text;
+            deck3.Clear();
+            for (int i = 0; i < 30; i++)
+            {
+                deck3.Add(tempDeck[i]);
+            }
+        }
+        tempDeck.Clear();
+        //SaveData();
+        createADeckMenu.SetActive(false);
+        deckMenu.SetActive(true);
+    }
+
+    public void CreateADeck_CancelButton()
+    {
+        tempDeck.Clear();
+        createADeckMenu.SetActive(false);
+        deckMenu.SetActive(true);
+    }
+
+    public void DeckManager_BackButton()
+    {
+        deckMenu.SetActive(false);
+        mainMenu.SetActive(true);
     }
 }
