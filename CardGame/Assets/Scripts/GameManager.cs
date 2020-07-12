@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour
     public GameObject deckManager_Deck2CurrentDeck;
     public GameObject deckManager_Deck3CurrentDeck;
     public GameObject deckManager_BackButton;
+    public Button makeACardButton;
+    public Button createACardButton;
 
     // Custom Card 1
     public string customCard1_Name;
@@ -187,10 +189,17 @@ public class GameManager : MonoBehaviour
                 deckManager_Deck3Name.text = deck3Name;
             }
         }
+
+        // Disable CreateACard button if there have already been 3 cards made
+        if (allCards.Count >= 154)
+        {
+            createACardButton.interactable = false;
+        }
     }
 
     public void SelectDeck1()
     {
+        // If deck is brand new, create it. Otherwise, select it.
         if (deck1.Count == 30)
         {
             currentDeck = 1;
@@ -203,6 +212,7 @@ public class GameManager : MonoBehaviour
 
     public void SelectDeck2()
     {
+        // If deck is brand new, create it. Otherwise, select it.
         if (deck2.Count == 30)
         {
             currentDeck = 2;
@@ -215,6 +225,7 @@ public class GameManager : MonoBehaviour
 
     public void SelectDeck3()
     {
+        // If deck is brand new, create it. Otherwise, select it.
         if (deck3.Count == 30)
         {
             currentDeck = 3;
@@ -273,31 +284,7 @@ public class GameManager : MonoBehaviour
             createADeckCancelButton.GetComponent<Button>().interactable = false;
         }
 
-        // Populate the database with all of the cards
-        for (int i = 0; i < allCards.Count; i++)
-        {
-            // Address the specific PokemonEntry
-            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
-
-            // Assign the next Pokemon on the list to the entry field
-            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
-
-            // Define wether the card field is legendary or not
-            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
-
-            // Limit legendary cards to one of each kind per deck
-            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
-            }
-            else
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
-            }
-
-            // Pass on the index number
-            newEntry.GetComponent<PokemonEntry>().index = i;
-        }
+        PopulateCardDatabase();
     }
 
     public void CreateDeck2()
@@ -348,31 +335,7 @@ public class GameManager : MonoBehaviour
             createADeckCancelButton.GetComponent<Button>().interactable = false;
         }
 
-        // Populate the database with all of the cards
-        for (int i = 0; i < allCards.Count; i++)
-        {
-            // Address the specific PokemonEntry
-            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
-
-            // Assign the next Pokemon on the list to the entry field
-            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
-
-            // Define wether the card field is legendary or not
-            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
-
-            // Limit legendary cards to one of each kind per deck
-            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
-            }
-            else
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
-            }
-
-            // Pass on the index number
-            newEntry.GetComponent<PokemonEntry>().index = i;
-        }
+        PopulateCardDatabase();
     }
 
     public void CreateDeck3()
@@ -423,31 +386,7 @@ public class GameManager : MonoBehaviour
             createADeckCancelButton.GetComponent<Button>().interactable = false;
         }
 
-        // Populate the database with all of the cards
-        for (int i = 0; i < allCards.Count; i++)
-        {
-            // Address the specific PokemonEntry
-            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
-
-            // Assign the next Pokemon on the list to the entry field
-            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
-
-            // Define wether the card field is legendary or not
-            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
-
-            // Limit legendary cards to one of each kind per deck
-            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
-            }
-            else
-            {
-                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
-            }
-
-            // Pass on the index number
-            newEntry.GetComponent<PokemonEntry>().index = i;
-        }
+        PopulateCardDatabase();
     }
 
     public void SaveData()
@@ -542,5 +481,52 @@ public class GameManager : MonoBehaviour
     {
         deckMenu.SetActive(false);
         mainMenu.SetActive(true);
+    }
+
+    public void MakeACardButton()
+    {
+        createADeckMenu.SetActive(false);
+        makeACardMenu.SetActive(true);
+    }
+
+    public void PopulateCardDatabase()
+    {
+        // Populate the database with all of the custom cards
+        for (int i = 0; i < 151; i++)
+        {
+            // Get the names of all of the default cards so they're not accidentally readded
+            List<string> namesToAvoid = new List<string>();
+            namesToAvoid.Add(allCards[i].name);
+        }
+        for (int i = 0; i < 151; i++)
+        {
+            // Add the cards that are not part of the default cards list
+            //allCards.Add(AssetDatabase.FindAssets());
+            //namesToAvoid.Add(allCards[i].name);
+        }
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            // Address the specific PokemonEntry
+            GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
+
+            // Assign the next Pokemon on the list to the entry field
+            newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
+
+            // Define wether the card field is legendary or not
+            newEntry.GetComponent<PokemonEntry>().legendary = allCards[i].legendary;
+
+            // Limit legendary cards to one of each kind per deck
+            if (newEntry.GetComponent<PokemonEntry>().legendary == false)
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 3;
+            }
+            else
+            {
+                newEntry.GetComponent<PokemonEntry>().maxQuantity = 1;
+            }
+
+            // Pass on the index number
+            newEntry.GetComponent<PokemonEntry>().index = i;
+        }
     }
 }

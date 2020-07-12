@@ -49,18 +49,17 @@ public class CardFace : MonoBehaviour
         remainingAttack = card.attack;
         remainingHealth = card.health;
 
-
         // Determine card's weakness and resistance
         if (card.type == "Bug")
         {
             weaknessType = "Flying";
             resistanceType = "";
         }
-        /*else if (card.type == "Dark")
+        else if (card.type == "Dark")
         {
             weaknessType = "Bug";
             resistanceType = "Psychic";
-        }*/
+        }
         else if (card.type == "Dragon")
         {
             weaknessType = "Fairy";
@@ -94,7 +93,7 @@ public class CardFace : MonoBehaviour
         else if (card.type == "Ghost")
         {
             weaknessType = "Ghost";
-            resistanceType = "Fighting";
+            resistanceType = "Normal";
         }
         else if (card.type == "Grass")
         {
@@ -124,18 +123,18 @@ public class CardFace : MonoBehaviour
         else if (card.type == "Psychic")
         {
             weaknessType = "Bug";
-            resistanceType = "";
+            resistanceType = "Fighting";
         }
         else if (card.type == "Rock")
         {
             weaknessType = "Water";
-            resistanceType = "Normal";
+            resistanceType = "";
         }
-        /*else if (card.type == "Steel")
+        else if (card.type == "Steel")
         {
             weaknessType = "Ground";
             resistanceType = "Poison";
-        }*/
+        }
         else if (card.type == "Water")
         {
             weaknessType = "Electric";
