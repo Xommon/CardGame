@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEditor.IMGUI;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     public GameObject createADeckCancelButton;
     public GameObject createADeckSaveButton;
     public GameObject createADeckScrollArea;
+    public GameObject createADeckAmountOfCardsDisplay;
 
     // Custom Card 1
     public string customCard1_Name;
@@ -87,37 +89,51 @@ public class GameManager : MonoBehaviour
         {
             if (currentDeck == 1)
             {
-                if (deck1.Count < 30)
+                if (deck1.Count != 30)
                 {
-                    createADeckSaveButton.SetActive(false);
+                    createADeckSaveButton.GetComponent<Button>().interactable = false;
                 }
                 else
                 {
-                    createADeckSaveButton.SetActive(true);
+                    createADeckSaveButton.GetComponent<Button>().interactable = true;
                 }
             }
             else if (currentDeck == 2)
             {
-                if (deck2.Count < 30)
+                if (deck2.Count != 30)
                 {
-                    createADeckSaveButton.SetActive(false);
+                    createADeckSaveButton.GetComponent<Button>().interactable = false;
                 }
                 else
                 {
-                    createADeckSaveButton.SetActive(true);
+                    createADeckSaveButton.GetComponent<Button>().interactable = true;
                 }
             }
             if (currentDeck == 3)
             {
-                if (deck3.Count < 30)
+                if (deck3.Count != 30)
                 {
-                    createADeckSaveButton.SetActive(false);
+                    createADeckSaveButton.GetComponent<Button>().interactable = false;
                 }
                 else
                 {
-                    createADeckSaveButton.SetActive(true);
+                    createADeckSaveButton.GetComponent<Button>().interactable = true;
                 }
             }
+        }
+
+        // Update the amount of cards in the deck
+        if (currentDeck == 1)
+        {
+            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck1.Count + " / 30";
+        }
+        else if (currentDeck == 2)
+        {
+            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck2.Count + " / 30";
+        }
+        else if (currentDeck == 3)
+        {
+            createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = deck3.Count + " / 30";
         }
     }
 
@@ -126,6 +142,15 @@ public class GameManager : MonoBehaviour
         // Set the current deck
         currentDeck = 1;
 
+        // Load current deck if it has already been made
+        if (deck1.Count == 30)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck1[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1; ;
+            }
+        }
+
         // Open the Create-a-Deck window
         deckMenu.SetActive(false);
         createADeckMenu.SetActive(true);
@@ -133,7 +158,7 @@ public class GameManager : MonoBehaviour
         // Disable the cancel button if this is the first deck being made
         if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
         {
-            createADeckCancelButton.SetActive(false);
+            createADeckCancelButton.GetComponent<Button>().interactable = false;
         }
 
         // Populate the database with all of the cards
@@ -161,5 +186,11 @@ public class GameManager : MonoBehaviour
             // Pass on the index number
             newEntry.GetComponent<PokemonEntry>().index = i;
         }
+    }
+
+    public void OpenDeckManager()
+    {
+        mainMenu.SetActive(false);
+        deckMenu.SetActive(true);
     }
 }

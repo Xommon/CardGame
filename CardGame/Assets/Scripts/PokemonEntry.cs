@@ -22,11 +22,15 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
     public Image weaknessDisplay;
     public Image resistanceDisplay;
     public Texture2D typeSpriteSheet;
+    public int currentDeck;
     public int index;
     public bool legendary;
 
     private void Start()
     {
+        // Set current deck
+        currentDeck = FindObjectOfType<GameManager>().currentDeck;
+
         // Attach Pokemon card name and quantity fields
         thisEntryName = gameObject.transform.Find("PokemonName").gameObject;
         thisEntryCount = gameObject.transform.Find("IndividualCardCount").gameObject;
@@ -56,7 +60,6 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
 
         // Separate Pokemon types sprites into array from spritesheet, then display the correct weakness and resistance
         Sprite[] sprites = Resources.LoadAll<Sprite>(typeSpriteSheet.name);
-        Debug.Log(cardDisplay.GetComponent<CardFace>().card.weaknessType + "/" + cardDisplay.GetComponent<CardFace>().card.resistanceType);
         for (int i = 0; i < sprites.Length; i++)
         {
             if (cardDisplay.GetComponent<CardFace>().weaknessType != "")
@@ -88,6 +91,62 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
             {
                 resistanceDisplay.color = new Color(255, 255, 255, 0);
             }
+        }
+
+        // Disable and enable plus/minus buttons accordingly
+        if (currentQuantity == 0)
+        {
+            thisMinusButton.GetComponent<Button>().interactable = false;
+            thisPlusButton.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            thisMinusButton.GetComponent<Button>().interactable = true;
+        }
+
+        if ((maxQuantity == 3 && currentQuantity == 3) || (maxQuantity == 1 && currentQuantity == 1))
+        {
+            thisPlusButton.GetComponent<Button>().interactable = false;
+        }
+
+        if (currentQuantity < maxQuantity)
+        {
+            thisPlusButton.GetComponent<Button>().interactable = true;
+        }
+    }
+
+    // Add functionality to the buttons
+    public void AddCard()
+    {
+        currentQuantity += 1;
+        if (currentDeck == 1)
+        {
+            FindObjectOfType<GameManager>().deck1.Add(cardDisplay.GetComponent<CardFace>().card);
+        }
+        else if (currentDeck == 2)
+        {
+            FindObjectOfType<GameManager>().deck2.Add(cardDisplay.GetComponent<CardFace>().card);
+        }
+        else if (currentDeck == 3)
+        {
+            FindObjectOfType<GameManager>().deck3.Add(cardDisplay.GetComponent<CardFace>().card);
+        }
+    }
+
+    public void RemoveCard()
+    {
+        currentQuantity -= 1;
+        if (currentDeck == 1)
+        {
+            FindObjectOfType<GameManager>().deck1.Remove(cardDisplay.GetComponent<CardFace>().card);
+        }
+        else if (currentDeck == 2)
+        {
+            FindObjectOfType<GameManager>().deck2.Remove(cardDisplay.GetComponent<CardFace>().card);
+        }
+        else if (currentDeck == 3)
+        {
+            FindObjectOfType<GameManager>().deck3.Remove(cardDisplay.GetComponent<CardFace>().card);
         }
     }
 
