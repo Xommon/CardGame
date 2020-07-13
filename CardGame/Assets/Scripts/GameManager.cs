@@ -53,44 +53,17 @@ public class GameManager : MonoBehaviour
     public Button makeACardButton;
     public Button createACardButton;
 
-    // Custom Card 1
-    public string customCard1_Name;
-    public int customCard1_Energy;
-    public int customCard1_Attack;
-    public int customCard1_Heath;
-    public int customCard1_Type;
-    public string customCard1_Ability;
-    public int customCard1_Background;
-    public int customCard1_PokemonImage;
-    public int customCard1_dexNumber;
-
-    // Custom Card 2
-    public string customCard2_Name;
-    public int customCard2_Energy;
-    public int customCard2_Attack;
-    public int customCard2_Heath;
-    public int customCard2_Type;
-    public string customCard2_Ability;
-    public int customCard2_Background;
-    public int customCard2_PokemonImage;
-    public int customCard2_dexNumber;
-
-    // Custom Card 3
-    public string customCard3_Name;
-    public int customCard3_Energy;
-    public int customCard3_Attack;
-    public int customCard3_Heath;
-    public int customCard3_Type;
-    public string customCard3_Ability;
-    public int customCard3_Background;
-    public int customCard3_PokemonImage;
-    public int customCard3_dexNumber;
+    // Scripts
+    public BattleManager battleManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Load save data
-        //LoadData();
+        // Select current deck
+        currentDeck = 1;
+
+        // Assign BattleManager
+        battleManager = FindObjectOfType<BattleManager>();
 
         // If no decks have been created, then it's the player's first time playing. Open the deck creation menu.
         if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
@@ -389,39 +362,6 @@ public class GameManager : MonoBehaviour
         PopulateCardDatabase();
     }
 
-    public void SaveData()
-    {
-        SaveSystem.SaveGame(this);
-    }
-
-    public void LoadData()
-    {
-        SaveData data = SaveSystem.LoadData();
-
-        // Reconstruct the decks if they were built previously
-        if (data.deck1[0] != "")
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                deck1.Add(FindCardByName(data.deck1[i]));
-            }
-        }
-        if (data.deck2[0] != "")
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                deck2.Add(FindCardByName(data.deck2[i]));
-            }
-        }
-        if (data.deck3[0] != "")
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                deck3.Add(FindCardByName(data.deck3[i]));
-            }
-        }
-    }
-
     public Card FindCardByName(string name)
     {
         return Resources.Load("Assets/Cards/" + name) as Card;
@@ -491,6 +431,15 @@ public class GameManager : MonoBehaviour
 
     public void PopulateCardDatabase()
     {
+        // Add custom cards to card database
+        /*string[] customCards = AssetDatabase.FindAssets("", new[] { "Cards/Custom" });
+        for (int i = 0; i < 3; i++)
+        {
+            allCards.Add(customCards[0]);
+        }*/
+        //Debug.Log(AssetDatabase.LoadAssetAtPath("Assets/Card/Custom/Kyrgyzstan", typeof(GameObject)));
+        //Debug.Log(Resources.LoadAll<Card>("Card", GameObject));
+
         // Populate the database with all of the custom cards
         for (int i = 0; i < 151; i++)
         {
@@ -528,5 +477,30 @@ public class GameManager : MonoBehaviour
             // Pass on the index number
             newEntry.GetComponent<PokemonEntry>().index = i;
         }
+    }
+
+    public void PlayButton()
+    {
+        // Transfer the current deck to the battle manager
+        battleManager.player1_BattleDeck.Clear();
+        for (int i = 0; i < 30; i++)
+        {
+            if (currentDeck == 1)
+            {
+                battleManager.player1_BattleDeck.Add(deck1[i]);
+            }
+            else if (currentDeck == 2)
+            {
+                battleManager.player1_BattleDeck.Add(deck2[i]);
+            }
+            else if (currentDeck == 3)
+            {
+                battleManager.player1_BattleDeck.Add(deck3[i]);
+            }
+        }
+
+        // Start the battle
+        battleManager.BattleStart();
+        mainMenu.SetActive(false);
     }
 }

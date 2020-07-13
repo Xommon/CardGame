@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
   m_Name: Beedrill
   m_EditorClassIdentifier: 
-  type: Bug
+  type: Poison
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 15
   sprite: {fileID: -1723765504620374145, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
@@ -22,3 +24,4 @@ MonoBehaviour:
   health: 4
   energy: 3
   ability: 
+  legendary: 0

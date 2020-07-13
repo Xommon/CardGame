@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Electrode
   m_EditorClassIdentifier: 
   type: Electric
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 101
   sprite: {fileID: 250522112599007044, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
@@ -21,4 +23,5 @@ MonoBehaviour:
   attack: 4
   health: 4
   energy: 5
-  ability: Explode
+  ability: Explosive
+  legendary: 0

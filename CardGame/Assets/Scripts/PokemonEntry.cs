@@ -113,6 +113,12 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
         {
             thisPlusButton.GetComponent<Button>().interactable = true;
         }
+
+        if (maxQuantity == 0)
+        {
+            thisPlusButton.GetComponent<Button>().interactable = false;
+            thisMinusButton.GetComponent<Button>().interactable = false;
+        }
     }
 
     // Add functionality to the buttons

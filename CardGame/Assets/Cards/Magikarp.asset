@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Magikarp
   m_EditorClassIdentifier: 
   type: Water
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 129
   sprite: {fileID: 7882609409813279853, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
@@ -20,5 +22,6 @@ MonoBehaviour:
     type: 3}
   attack: 1
   health: 1
-  energy: 1
+  energy: 0
   ability: 
+  legendary: 0

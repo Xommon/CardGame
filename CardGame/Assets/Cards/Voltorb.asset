@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Voltorb
   m_EditorClassIdentifier: 
   type: Electric
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 100
   sprite: {fileID: 2059849569236967053, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
@@ -21,4 +23,5 @@ MonoBehaviour:
   attack: 2
   health: 2
   energy: 3
-  ability: Explode
+  ability: Explosive
+  legendary: 0

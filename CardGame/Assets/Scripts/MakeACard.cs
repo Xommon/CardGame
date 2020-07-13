@@ -89,7 +89,7 @@ public class MakeACard : MonoBehaviour
         abilities.Add("Quick");
         abilities.Add("Guard");
         abilities.Add("Disable");
-        abilities.Add("Explode");
+        abilities.Add("Explosive");
         abilities.Add("Heal");
         abilities.Add("Transform");
         abilities.Add("Convert");
@@ -538,7 +538,8 @@ public class MakeACard : MonoBehaviour
         dexNumber = gameManager.allCards.Count + 1;
         gameManager.allCards.Add(customCard);
         customCard.legendary = legendary;
-        AssetDatabase.CreateAsset(customCard, "Assets/Cards/" + name + ".asset");
+        AssetDatabase.CreateAsset(customCard, "Assets/Cards/Custom/" + name + ".asset");
+        gameManager.newCustomCard = customCard;
     }
 
     public void CreateButton()
