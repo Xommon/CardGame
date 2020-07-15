@@ -100,7 +100,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             le.preferredHeight = this.GetComponent<LayoutElement>().preferredHeight;
             le.flexibleWidth = 0;
             le.flexibleHeight = 0;
-            le.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 200);
+            //le.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 200);
             placeHolder2.transform.SetSiblingIndex(this.transform.GetSiblingIndex());
 
             // Remove card from hand temporarily

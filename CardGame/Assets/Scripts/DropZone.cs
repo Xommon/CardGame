@@ -39,11 +39,6 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 newGamePiece.GetComponent<GamePiece>().card = eventData.pointerDrag.GetComponent<CardFace>().card;
                 newGamePiece.GetComponent<GamePiece>().player = 1;
                 battleManager.player1_BattleField.Add(newGamePiece.GetComponent<GamePiece>());
-                battleManager.player2_BattleField.Add(newGamePiece.GetComponent<GamePiece>());
-                /*if (eventData.pointerDrag.gameObject.GetComponent<Draggable>().placeHolder != null)
-                {
-                    Destroy(eventData.pointerDrag.gameObject.GetComponent<Draggable>().placeHolder);
-                }*/
                 if (eventData.pointerDrag.gameObject.GetComponent<Draggable>().placeHolder2 != null)
                 {
                     Destroy(eventData.pointerDrag.gameObject.GetComponent<Draggable>().placeHolder2);
