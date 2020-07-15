@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
-  m_Name: "AlolanRatata\u200B"
+  m_Name: Ledian
   m_EditorClassIdentifier: 
-  type: Dark
+  type: Bug
   weaknessType: 
   resistanceType: 
   cry: {fileID: 0}
-  dexNumber: 0
-  sprite: {fileID: 2101967172996826835, guid: 91ebf1b613e24e644abdebfc0cad9729, type: 3}
-  background: {fileID: 7608924141058073638, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  dexNumber: 166
+  sprite: {fileID: 8475076626621314944, guid: 0fd5935929fe301498db844cc648515c, type: 3}
+  background: {fileID: 2278953690292216646, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}
-  attack: 1
-  health: 1
-  energy: 1
-  ability: Guard
+  attack: 3
+  health: 4
+  energy: 3
+  ability: 
   legendary: 0

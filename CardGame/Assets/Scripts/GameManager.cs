@@ -168,6 +168,9 @@ public class GameManager : MonoBehaviour
         {
             createACardButton.interactable = false;
         }
+
+        // Update the length of the scroll area
+        createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 51.03f);
     }
 
     public void SelectDeck1()
@@ -502,5 +505,14 @@ public class GameManager : MonoBehaviour
         // Start the battle
         battleManager.BattleStart();
         mainMenu.SetActive(false);
+    }
+
+    public void AllCardTypeTally()
+    {
+        // Debug function that displays how many cards of each type exist
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            Debug.Log(allCards[i].type);
+        }
     }
 }

@@ -24,7 +24,7 @@ public class CardFace : MonoBehaviour
     public string resistanceType;
 
     // Start is called before the first frame update
-    void Update()
+    void FixedUpdate()
     {
         // Separate Pokemon types sprites into array from spritesheet then assign the correct type sprite to the card
         Sprite[] sprites = Resources.LoadAll<Sprite>(typeSpriteSheet.name);
@@ -92,7 +92,7 @@ public class CardFace : MonoBehaviour
         }
         else if (card.type == "Ghost")
         {
-            weaknessType = "Ghost";
+            weaknessType = "Dark";
             resistanceType = "Normal";
         }
         else if (card.type == "Grass")

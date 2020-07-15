@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
-  m_Name: "Kyrgyzstan\u200B"
+  m_Name: Sentret
   m_EditorClassIdentifier: 
-  type: Electric
+  type: Normal
   weaknessType: 
   resistanceType: 
   cry: {fileID: 0}
-  dexNumber: 0
-  sprite: {fileID: 8179469767341245018, guid: 91ebf1b613e24e644abdebfc0cad9729, type: 3}
-  background: {fileID: -1923539896265629339, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  dexNumber: 161
+  sprite: {fileID: -3482581755796691822, guid: 0fd5935929fe301498db844cc648515c, type: 3}
+  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
     type: 3}
-  attack: 7
-  health: 3
-  energy: 5
-  ability: Explode
+  attack: 1
+  health: 2
+  energy: 1
+  ability: 
   legendary: 0

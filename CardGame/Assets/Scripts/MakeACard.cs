@@ -112,7 +112,7 @@ public class MakeACard : MonoBehaviour
     void Update()
     {
         // Disable save button if there's too many cards made or the user didn't give the card a name
-        if (gameManager.allCards.Count >= 154)
+        if (gameManager.allCards.Count >= 254)
         {
             createButton.interactable = false;
         }

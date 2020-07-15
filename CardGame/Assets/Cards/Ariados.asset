@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
+  m_Name: Ariados
+  m_EditorClassIdentifier: 
+  type: Bug
+  weaknessType: 
+  resistanceType: 
+  cry: {fileID: 0}
+  dexNumber: 168
+  sprite: {fileID: -236290536902724830, guid: 0fd5935929fe301498db844cc648515c, type: 3}
+  background: {fileID: 2278953690292216646, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+    type: 3}
+  attack: 4
+  health: 3
+  energy: 3
+  ability: 
+  legendary: 0

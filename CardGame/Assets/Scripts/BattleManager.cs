@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
+    public CardFace player1;
+    public CardFace player2;
     public List<Card> player1_BattleDeck;
     public List<Card> player2_BattleDeck;
     public List<Card> tempDeck;
@@ -12,17 +15,34 @@ public class BattleManager : MonoBehaviour
     public List<Card> player2_Hand;
     public List<Card> player1_DiscardPile;
     public List<Card> player2_DiscardPile;
-    public int player1_Health;
-    public int player2_Health;
+    public List<GamePiece> player1_BattleField;
+    public List<GamePiece> player2_BattleField;
     public int player1_MaxEnergy;
     public int player2_MaxEnergy;
     public int player1_CurrentEnergy;
     public int player2_CurrentEnergy;
     public TextMesh player1_EnergyDisplay;
     public TextMesh player2_EnergyDisplay;
-    public TextMesh player1_HealthDisplay;
-    public TextMesh player2_HealthDisplay;
+    public TextMeshProUGUI player1_HealthDisplay;
+    public TextMeshProUGUI player2_HealthDisplay;
     public GameManager gameManager;
+    public int playerTurn;
+    public GamePiece selectedGamePiece;
+    public GameObject placeHolder;
+    public GameObject card;
+    public GameObject opponentCard;
+    public GameObject player1_HandObject;
+    public GameObject player2_HandObject;
+    public bool attackInProgress;
+    public bool isDragging;
+    public bool sentIsNotDragging;
+    public TextMeshProUGUI bigAnnouncement;
+    public TextMeshProUGUI smallAnnouncement;
+    public int announcementCounter;
+    public Button endTurnButton;
+    public int cardDrawCounter;
+    public bool cardDrawBool;
+    public GameObject coinFlip;
 
     // Start is called before the first frame update
     void Start()
@@ -38,8 +58,78 @@ public class BattleManager : MonoBehaviour
         // Update player stats
         player1_EnergyDisplay.text = player1_CurrentEnergy + "/" + player1_MaxEnergy;
         player2_EnergyDisplay.text = player2_CurrentEnergy + "/" + player2_MaxEnergy;
-        player1_HealthDisplay.text = player1_Health.ToString();
-        player2_HealthDisplay.text = player2_Health.ToString();
+
+        if (Input.GetKeyDown("m"))
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+
+        if (sentIsNotDragging)
+        {
+            isDragging = false;
+            sentIsNotDragging = false;
+        }
+
+        if (bigAnnouncement.gameObject.activeInHierarchy || smallAnnouncement.gameObject.activeInHierarchy)
+        {
+            announcementCounter++;
+
+            if (announcementCounter >= 120)
+            {
+                bigAnnouncement.gameObject.SetActive(false);
+                smallAnnouncement.gameObject.SetActive(false);
+            }
+        }
+
+        // Start the initial card draw counter
+        if (cardDrawBool)
+        {
+            cardDrawCounter++;
+        }
+
+        if (cardDrawCounter == 30)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter == 60)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter == 90)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter == 120)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter == 150)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter >= 180)
+        {
+            cardDrawCounter = 0;
+            cardDrawBool = false;
+
+            // Determine who plays first
+            if (Random.Range(1, 3) == 1)
+            {
+                playerTurn = 2;
+                PlayerTurnStart();
+            }
+            else
+            {
+                playerTurn = 2;
+                PlayerTurnStart();
+            }
+        }
     }
 
     public void BattleStart()
@@ -49,12 +139,14 @@ public class BattleManager : MonoBehaviour
         ShuffleDeck(player2_BattleDeck);
 
         // Variables set
-        player1_Health = 30;
-        player2_Health = 30;
-        player1_MaxEnergy = 1;
-        player2_MaxEnergy = 1;
-        player1_CurrentEnergy = 1;
-        player2_CurrentEnergy = 1;
+        player1_MaxEnergy = 0;
+        player2_MaxEnergy = 0;
+        player1_CurrentEnergy = 0;
+        player2_CurrentEnergy = 0;
+
+        // Each player draws 5 cards
+        cardDrawCounter = 0;
+        cardDrawBool = true;
     }
 
     public void BattleEnd()
@@ -84,5 +176,92 @@ public class BattleManager : MonoBehaviour
 
         // Clear out the temp deck
         tempDeck.Clear();
+    }
+
+    public void Attack(GamePiece attacker, GamePiece defender)
+    {
+        if (attacker.player != defender.player & !attackInProgress)
+        {
+            attacker.counter = 0;
+            defender.counter = 0;
+            attackInProgress = true;
+            defender.currentHealth -= attacker.currentAttack;
+            attacker.currentHealth -= defender.currentAttack;
+            attacker.canAttack = false;
+            attacker.isSelected = false;
+            defender.isSelected = false;
+            selectedGamePiece = null;
+            if (defender.currentAttack > 0)
+            {
+                // Don't display damage if the defender has 0 attack
+                attacker.damageDisplay.text = "-" + defender.currentAttack;
+                attacker.damageEffect.SetActive(true);
+                attacker.damageEffect.GetComponent<Animator>().enabled = true;
+                attacker.damaged = true;
+            }
+            defender.damageDisplay.text = "-" + attacker.currentAttack;
+            defender.damageEffect.SetActive(true);
+            defender.damageEffect.GetComponent<Animator>().enabled = true;
+            defender.damaged = true;
+        }
+    }
+
+    public void DrawCard(int player)
+    {
+        if (player == 1)
+        {
+            if (player1_BattleDeck.Count > 0)
+            {
+                player1_Hand.Add(player1_BattleDeck[0]);
+                GameObject drawnCard = Instantiate(card, player1_HandObject.transform);
+                drawnCard.GetComponent<CardFace>().card = player1_BattleDeck[0];
+                player1_BattleDeck.RemoveAt(0);
+            }
+            else
+            {
+                Debug.Log("Out of cards!");
+            }
+        }
+        else
+        {
+            if (player2_BattleDeck.Count > 0)
+            {
+                player2_Hand.Add(player2_BattleDeck[0]);
+                GameObject drawnCard = Instantiate(opponentCard, player2_HandObject.transform);
+                drawnCard.GetComponent<CardFace>().card = player2_BattleDeck[0];
+                player2_BattleDeck.RemoveAt(0);
+            }
+        }
+    }
+
+    public void PlayerTurnStart()
+    {
+        if (playerTurn == 2)
+        {
+            // Player's turn
+            announcementCounter = 0;
+            bigAnnouncement.gameObject.SetActive(true);
+            bigAnnouncement.text = "Your turn";
+            endTurnButton.interactable = true;
+            playerTurn = 1;
+            player1_MaxEnergy++;
+            player1_CurrentEnergy = player1_MaxEnergy;
+        }
+        else if (playerTurn == 1)
+        {
+            // Opponent's turn
+            announcementCounter = 0;
+            bigAnnouncement.gameObject.SetActive(true);
+            bigAnnouncement.text = "Opponent's turn";
+            endTurnButton.interactable = false;
+            playerTurn = 2;
+            player2_MaxEnergy++;
+            player2_CurrentEnergy = player2_MaxEnergy;
+        }
+    }
+
+    public void PlayerTurnEnd()
+    {
+        PlayerTurnStart();
     }
 }
