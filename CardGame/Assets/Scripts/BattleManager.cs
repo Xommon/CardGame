@@ -51,6 +51,7 @@ public class BattleManager : MonoBehaviour
     {
         // Prepare decks
         player1_BattleDeck = new List<Card>();
+        //player2_BattleDeck = new List<Card>();
     }
 
     // Update is called once per frame
@@ -62,8 +63,8 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyDown("m"))
         {
-            Destroy(artificialIntelligence.physicalCardList[artificialIntelligence.physicalCardList.Count].gameObject);
-            artificialIntelligence.physicalCardList.RemoveAt(artificialIntelligence.physicalCardList.Count);
+            DrawCard(1);
+            DrawCard(2);
         }
 
         if (sentIsNotDragging)
@@ -120,8 +121,17 @@ public class BattleManager : MonoBehaviour
             cardDrawBool = false;
 
             // Determine who plays first
-            playerTurn = Random.Range(1, 3);
-            PlayerTurnStart();
+            if (Random.Range(1, 3) == 1)
+            {
+                playerTurn = 2;
+                PlayerTurnStart();
+            }
+            else
+            {
+                playerTurn = 1;
+                artificialIntelligence.on = true;
+                PlayerTurnStart();
+            }
         }
     }
 
@@ -173,29 +183,25 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
-        if (attacker.player != defender.player)
+        if (attacker.player != defender.player && !attackInProgress)
         {
-            if ((playerTurn == 1 && !attackInProgress) || playerTurn == 2)
-            {
-
-                attacker.counter = 0;
-                defender.counter = 0;
-                attackInProgress = true;
-                defender.currentHealth -= attacker.currentAttack;
-                attacker.currentHealth -= defender.currentAttack;
-                attacker.canAttack = false;
-                attacker.isSelected = false;
-                defender.isSelected = false;
-                selectedGamePiece = null;
-                attacker.damageDisplay.text = "-" + defender.currentAttack;
-                attacker.damageEffect.SetActive(true);
-                attacker.damageEffect.GetComponent<Animator>().enabled = true;
-                attacker.damaged = true;
-                defender.damageDisplay.text = "-" + attacker.currentAttack;
-                defender.damageEffect.SetActive(true);
-                defender.damageEffect.GetComponent<Animator>().enabled = true;
-                defender.damaged = true;
-            }
+            attacker.counter = 0;
+            defender.counter = 0;
+            attackInProgress = true;
+            defender.currentHealth -= attacker.currentAttack;
+            attacker.currentHealth -= defender.currentAttack;
+            attacker.canAttack = false;
+            attacker.isSelected = false;
+            defender.isSelected = false;
+            selectedGamePiece = null;
+            attacker.damageDisplay.text = "-" + defender.currentAttack;
+            attacker.damageEffect.SetActive(true);
+            attacker.damageEffect.GetComponent<Animator>().enabled = true;
+            attacker.damaged = true;
+            defender.damageDisplay.text = "-" + attacker.currentAttack;
+            defender.damageEffect.SetActive(true);
+            defender.damageEffect.GetComponent<Animator>().enabled = true;
+            defender.damaged = true;
         }
     }
 
@@ -252,7 +258,6 @@ public class BattleManager : MonoBehaviour
         else if (playerTurn == 1)
         {
             // Opponent's turn
-            artificialIntelligence.on = true;
             artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
@@ -278,7 +283,6 @@ public class BattleManager : MonoBehaviour
         artificialIntelligence.thinkCounter = 0;
         PlayerTurnStart();
         artificialIntelligence.on = false;
-        artificialIntelligence.possiblePlays.Clear();
     }
 
     public void PlayerTurnEnd()
