@@ -127,7 +127,8 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                playerTurn = 2;
+                playerTurn = 1;
+                artificialIntelligence.on = true;
                 PlayerTurnStart();
             }
         }
@@ -181,7 +182,7 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
-        if (attacker.player != defender.player & !attackInProgress)
+        if (attacker.player != defender.player && !attackInProgress)
         {
             attacker.counter = 0;
             defender.counter = 0;
@@ -192,14 +193,6 @@ public class BattleManager : MonoBehaviour
             attacker.isSelected = false;
             defender.isSelected = false;
             selectedGamePiece = null;
-            if (defender.currentAttack > 0)
-            {
-                // Don't display damage if the defender has 0 attack
-                attacker.damageDisplay.text = "-" + defender.currentAttack;
-                attacker.damageEffect.SetActive(true);
-                attacker.damageEffect.GetComponent<Animator>().enabled = true;
-                attacker.damaged = true;
-            }
             attacker.damageDisplay.text = "-" + defender.currentAttack;
             attacker.damageEffect.SetActive(true);
             attacker.damageEffect.GetComponent<Animator>().enabled = true;
@@ -255,6 +248,7 @@ public class BattleManager : MonoBehaviour
         else if (playerTurn == 1)
         {
             // Opponent's turn
+            artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
             bigAnnouncement.text = "Opponent's turn";
