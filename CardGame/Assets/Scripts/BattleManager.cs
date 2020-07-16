@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
-    public GamePiece player1_Trainer;
-    public GamePiece player2_Trainer;
+    public CardFace player1;
+    public CardFace player2;
     public List<Card> player1_BattleDeck;
     public List<Card> player2_BattleDeck;
     public List<Card> tempDeck;
@@ -17,8 +17,6 @@ public class BattleManager : MonoBehaviour
     public List<Card> player2_DiscardPile;
     public List<GamePiece> player1_BattleField;
     public List<GamePiece> player2_BattleField;
-    public GameObject player1_BattleFieldObject;
-    public GameObject player2_BattleFieldObject;
     public int player1_MaxEnergy;
     public int player2_MaxEnergy;
     public int player1_CurrentEnergy;
@@ -44,7 +42,7 @@ public class BattleManager : MonoBehaviour
     public Button endTurnButton;
     public int cardDrawCounter;
     public bool cardDrawBool;
-    public ArtificialIntelligence artificialIntelligence;
+    public GameObject coinFlip;
 
     // Start is called before the first frame update
     void Start()
@@ -128,8 +126,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                playerTurn = 1;
-                artificialIntelligence.on = true;
+                playerTurn = 2;
                 PlayerTurnStart();
             }
         }
@@ -183,7 +180,7 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
-        if (attacker.player != defender.player && !attackInProgress)
+        if (attacker.player != defender.player & !attackInProgress)
         {
             attacker.counter = 0;
             defender.counter = 0;
@@ -194,10 +191,14 @@ public class BattleManager : MonoBehaviour
             attacker.isSelected = false;
             defender.isSelected = false;
             selectedGamePiece = null;
-            attacker.damageDisplay.text = "-" + defender.currentAttack;
-            attacker.damageEffect.SetActive(true);
-            attacker.damageEffect.GetComponent<Animator>().enabled = true;
-            attacker.damaged = true;
+            if (defender.currentAttack > 0)
+            {
+                // Don't display damage if the defender has 0 attack
+                attacker.damageDisplay.text = "-" + defender.currentAttack;
+                attacker.damageEffect.SetActive(true);
+                attacker.damageEffect.GetComponent<Animator>().enabled = true;
+                attacker.damaged = true;
+            }
             defender.damageDisplay.text = "-" + attacker.currentAttack;
             defender.damageEffect.SetActive(true);
             defender.damageEffect.GetComponent<Animator>().enabled = true;
@@ -229,7 +230,6 @@ public class BattleManager : MonoBehaviour
                 GameObject drawnCard = Instantiate(opponentCard, player2_HandObject.transform);
                 drawnCard.GetComponent<CardFace>().card = player2_BattleDeck[0];
                 player2_BattleDeck.RemoveAt(0);
-                artificialIntelligence.physicalCardList.Add(drawnCard);
             }
         }
     }
@@ -246,19 +246,10 @@ public class BattleManager : MonoBehaviour
             playerTurn = 1;
             player1_MaxEnergy++;
             player1_CurrentEnergy = player1_MaxEnergy;
-            DrawCard(1);
-            if (player1_BattleField.Count > 0)
-            {
-                for (int i = 0; i < player1_BattleField.Count; i++)
-                {
-                    player1_BattleField[i].canAttack = true;
-                }
-            }
         }
         else if (playerTurn == 1)
         {
             // Opponent's turn
-            artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
             bigAnnouncement.text = "Opponent's turn";
@@ -266,35 +257,11 @@ public class BattleManager : MonoBehaviour
             playerTurn = 2;
             player2_MaxEnergy++;
             player2_CurrentEnergy = player2_MaxEnergy;
-            DrawCard(2);
-            if (player2_BattleField.Count > 0)
-            {
-                for (int i = 0; i < player2_BattleField.Count; i++)
-                {
-                    player2_BattleField[i].canAttack = true;
-                }
-            }
         }
-    }
-
-    public void AITurnEnd()
-    {
-        Debug.Log("The AI has ended their turn.");
-        artificialIntelligence.thinkCounter = 0;
-        PlayerTurnStart();
-        artificialIntelligence.on = false;
     }
 
     public void PlayerTurnEnd()
     {
-        // Unselect all game pieces
-        for (int i = 0; i < player1_BattleField.Count; i++)
-        {
-            player1_BattleField[i].isSelected = false;
-            player1_BattleField[i].GetComponent<Image>().color = new Color32(255, 255, 255, 0);
-            selectedGamePiece = null;
-        }
-        artificialIntelligence.on = true;
         PlayerTurnStart();
     }
 }
