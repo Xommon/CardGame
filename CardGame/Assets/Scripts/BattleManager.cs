@@ -43,7 +43,7 @@ public class BattleManager : MonoBehaviour
     public int cardDrawCounter;
     public bool cardDrawBool;
     public GameObject coinFlip;
-    public ArtificialIntelligence artificialIntelligence;
+    public Artificial artificialIntelligence;
 
     // Start is called before the first frame update
     void Start()
@@ -127,8 +127,7 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                playerTurn = 1;
-                artificialIntelligence.on = true;
+                playerTurn = 2;
                 PlayerTurnStart();
             }
         }
@@ -182,7 +181,7 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
-        if (attacker.player != defender.player && !attackInProgress)
+        if (attacker.player != defender.player & !attackInProgress)
         {
             attacker.counter = 0;
             defender.counter = 0;
@@ -256,7 +255,6 @@ public class BattleManager : MonoBehaviour
         else if (playerTurn == 1)
         {
             // Opponent's turn
-            artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
             bigAnnouncement.text = "Opponent's turn";
