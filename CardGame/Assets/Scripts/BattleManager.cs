@@ -126,7 +126,12 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
+<<<<<<< HEAD
                 playerTurn = 2;
+=======
+                playerTurn = 1;
+                artificialIntelligence.on = true;
+>>>>>>> parent of a31091d... AI Update
                 PlayerTurnStart();
             }
         }
@@ -180,7 +185,11 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
+<<<<<<< HEAD
         if (attacker.player != defender.player & !attackInProgress)
+=======
+        if (attacker.player != defender.player && !attackInProgress)
+>>>>>>> parent of a31091d... AI Update
         {
             attacker.counter = 0;
             defender.counter = 0;
@@ -191,6 +200,7 @@ public class BattleManager : MonoBehaviour
             attacker.isSelected = false;
             defender.isSelected = false;
             selectedGamePiece = null;
+<<<<<<< HEAD
             if (defender.currentAttack > 0)
             {
                 // Don't display damage if the defender has 0 attack
@@ -199,6 +209,12 @@ public class BattleManager : MonoBehaviour
                 attacker.damageEffect.GetComponent<Animator>().enabled = true;
                 attacker.damaged = true;
             }
+=======
+            attacker.damageDisplay.text = "-" + defender.currentAttack;
+            attacker.damageEffect.SetActive(true);
+            attacker.damageEffect.GetComponent<Animator>().enabled = true;
+            attacker.damaged = true;
+>>>>>>> parent of a31091d... AI Update
             defender.damageDisplay.text = "-" + attacker.currentAttack;
             defender.damageEffect.SetActive(true);
             defender.damageEffect.GetComponent<Animator>().enabled = true;
@@ -250,6 +266,10 @@ public class BattleManager : MonoBehaviour
         else if (playerTurn == 1)
         {
             // Opponent's turn
+<<<<<<< HEAD
+=======
+            artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
+>>>>>>> parent of a31091d... AI Update
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
             bigAnnouncement.text = "Opponent's turn";
@@ -260,6 +280,17 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+<<<<<<< HEAD
+=======
+    public void AITurnEnd()
+    {
+        Debug.Log("The AI has ended their turn.");
+        artificialIntelligence.thinkCounter = 0;
+        PlayerTurnStart();
+        artificialIntelligence.on = false;
+    }
+
+>>>>>>> parent of a31091d... AI Update
     public void PlayerTurnEnd()
     {
         PlayerTurnStart();
