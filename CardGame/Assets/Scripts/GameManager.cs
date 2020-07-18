@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     // Submenu Items
     public GameObject deckBackButton;
-    public GameObject deckEditButton;
+    //public GameObject deckEditButton;
     public GameObject createADeckCancelButton;
     public GameObject createADeckSaveButton;
     public GameObject createADeckScrollArea;
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     public Button createACardButton;
 
     // Scripts
-    public BattleManager battleManager;
+    //public BattleManager battleManager;
 
     // Start is called before the first frame update
     void Start()
@@ -62,15 +62,12 @@ public class GameManager : MonoBehaviour
         // Select current deck
         currentDeck = 1;
 
-        // Assign BattleManager
-        battleManager = FindObjectOfType<BattleManager>();
-
         // If no decks have been created, then it's the player's first time playing. Open the deck creation menu.
         if (deck1.Count == 0 && deck2.Count == 0 && deck3.Count == 0)
         {
             deckMenu.SetActive(true);
             deckBackButton.SetActive(false);
-            deckEditButton.SetActive(false);
+            //deckEditButton.SetActive(false);
         }
         else // Otherwise, open the main menu
         {
@@ -95,7 +92,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Update the amount of cards in the deck
-        createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = tempDeck.Count + " / 30";
+        createADeckAmountOfCardsDisplay.GetComponent<TextMeshProUGUI>().text = tempDeck.Count + "/30";
 
         // Show current deck if deck manager window is open
         if (deckMenu.activeInHierarchy)
@@ -127,7 +124,7 @@ public class GameManager : MonoBehaviour
             {
                 deckManager_Deck1Cardback.SetActive(false);
                 deckManager_Deck1EditButton.interactable = false;
-                deckManager_Deck1Name.text = "New Deck";
+                deckManager_Deck1Name.text = "Create New Deck";
             }
             else
             {
@@ -140,7 +137,7 @@ public class GameManager : MonoBehaviour
             {
                 deckManager_Deck2Cardback.SetActive(false);
                 deckManager_Deck2EditButton.interactable = false;
-                deckManager_Deck2Name.text = "New Deck";
+                deckManager_Deck2Name.text = "Create New Deck";
             }
             else
             {
@@ -153,7 +150,7 @@ public class GameManager : MonoBehaviour
             {
                 deckManager_Deck3Cardback.SetActive(false);
                 deckManager_Deck3EditButton.interactable = false;
-                deckManager_Deck3Name.text = "New Deck";
+                deckManager_Deck3Name.text = "Create New Deck";
             }
             else
             {
@@ -164,13 +161,13 @@ public class GameManager : MonoBehaviour
         }
 
         // Disable CreateACard button if there have already been 3 cards made
-        if (allCards.Count >= 154)
+        if (allCards.Count >= 254)
         {
             createACardButton.interactable = false;
         }
 
         // Update the length of the scroll area
-        createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 51.03f);
+        createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 60f);
     }
 
     public void SelectDeck1()
@@ -214,13 +211,20 @@ public class GameManager : MonoBehaviour
 
     public void CreateDeck1()
     {
+        // Open the Create-a-Deck window
+        deckMenu.SetActive(false);
+        createADeckMenu.SetActive(true);
+
+        // Find Object index
+
+
         // Set Editing Deck
         editingDeck = 1;
 
         // Clear past card displays
         for (int i = 0; i < allCards.Count - 1; i++)
         {
-            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
         }
 
         // Load current deck if it has already been made
@@ -229,7 +233,7 @@ public class GameManager : MonoBehaviour
             // Load individual cards
             for (int i = 0; i < 30; i++)
             {
-                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck1[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
+                GameObject.Find("PokemonEntry (" + (deck1[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
             }
 
             // Convert real deck to temp deck until the player is ready to save
@@ -239,10 +243,6 @@ public class GameManager : MonoBehaviour
                 tempDeck.Add(deck1[i]);
             }
         }
-
-        // Open the Create-a-Deck window
-        deckMenu.SetActive(false);
-        createADeckMenu.SetActive(true);
 
         // Set up deck name
         if (deck1.Count == 30)
@@ -267,11 +267,15 @@ public class GameManager : MonoBehaviour
     {
         // Set Editing Deck
         editingDeck = 2;
-        
+
+        // Open the Create-a-Deck window
+        deckMenu.SetActive(false);
+        createADeckMenu.SetActive(true);
+
         // Clear past card displays
         for (int i = 0; i < allCards.Count - 1; i++)
         {
-            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
         }
 
         // Load current deck if it has already been made
@@ -280,7 +284,7 @@ public class GameManager : MonoBehaviour
             // Load individual cards
             for (int i = 0; i < 30; i++)
             {
-                createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck2[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
+                createADeckMenu.transform.Find("/AllCards/Scroll View/Viewport/ScrollArea/PokemonEntry (" + (deck2[i].dexNumber - 1) + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity += 1;
             }
 
             // Convert real deck to temp deck until the player is ready to save
@@ -290,10 +294,6 @@ public class GameManager : MonoBehaviour
                 tempDeck.Add(deck2[i]);
             }
         }
-
-        // Open the Create-a-Deck window
-        deckMenu.SetActive(false);
-        createADeckMenu.SetActive(true);
 
         // Set up deck name
         if (deck2.Count == 30)
@@ -319,10 +319,14 @@ public class GameManager : MonoBehaviour
         // Set Editing Deck
         editingDeck = 3;
 
+        // Open the Create-a-Deck window
+        deckMenu.SetActive(false);
+        createADeckMenu.SetActive(true);
+
         // Clear past card displays
         for (int i = 0; i < allCards.Count - 1; i++)
         {
-            createADeckMenu.transform.Find("Scroll View/Viewport/ScrollArea/PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
         }
 
         // Load current deck if it has already been made
@@ -341,10 +345,6 @@ public class GameManager : MonoBehaviour
                 tempDeck.Add(deck3[i]);
             }
         }
-
-        // Open the Create-a-Deck window
-        deckMenu.SetActive(false);
-        createADeckMenu.SetActive(true);
 
         // Set up deck name
         if (deck3.Count == 30)
@@ -408,7 +408,6 @@ public class GameManager : MonoBehaviour
             }
         }
         tempDeck.Clear();
-        //SaveData();
         createADeckMenu.SetActive(false);
         deckMenu.SetActive(true);
     }
@@ -440,17 +439,15 @@ public class GameManager : MonoBehaviour
         {
             allCards.Add(customCards[0]);
         }*/
-        //Debug.Log(AssetDatabase.LoadAssetAtPath("Assets/Card/Custom/Kyrgyzstan", typeof(GameObject)));
-        //Debug.Log(Resources.LoadAll<Card>("Card", GameObject));
 
         // Populate the database with all of the custom cards
-        for (int i = 0; i < 151; i++)
+        for (int i = 0; i < 250; i++)
         {
             // Get the names of all of the default cards so they're not accidentally readded
-            List<string> namesToAvoid = new List<string>();
-            namesToAvoid.Add(allCards[i].name);
+            //List<string> namesToAvoid = new List<string>();
+            //namesToAvoid.Add(allCards[i].name);
         }
-        for (int i = 0; i < 151; i++)
+        for (int i = 0; i < 250; i++)
         {
             // Add the cards that are not part of the default cards list
             //allCards.Add(AssetDatabase.FindAssets());
@@ -460,6 +457,7 @@ public class GameManager : MonoBehaviour
         {
             // Address the specific PokemonEntry
             GameObject newEntry = GameObject.Find("PokemonEntry (" + i + ")");
+            newEntry.GetComponent<PokemonEntry>().associatedPokemon = allCards[i];
 
             // Assign the next Pokemon on the list to the entry field
             newEntry.GetComponent<PokemonEntry>().name = allCards[i].name;
@@ -484,7 +482,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayButton()
     {
-        // Transfer the current deck to the battle manager
+        /*// Transfer the current deck to the battle manager
         battleManager.player1_BattleDeck.Clear();
         for (int i = 0; i < 30; i++)
         {
@@ -504,7 +502,7 @@ public class GameManager : MonoBehaviour
 
         // Start the battle
         battleManager.BattleStart();
-        mainMenu.SetActive(false);
+        mainMenu.SetActive(false);*/
     }
 
     public void AllCardTypeTally()

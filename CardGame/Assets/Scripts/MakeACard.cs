@@ -107,8 +107,7 @@ public class MakeACard : MonoBehaviour
         abilitiesDescriptions.Add("When played, choose any Pokémon to turn into.");
         abilitiesDescriptions.Add("When played, choose any type to turn into.");
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         // Disable save button if there's too many cards made or the user didn't give the card a name
@@ -220,7 +219,7 @@ public class MakeACard : MonoBehaviour
         {
             Background_Minus.interactable = false;
         }
-        else if (backgroundImage == 12)
+        else if (backgroundImage == 47)
         {
             Background_Plus.interactable = false;
         }
