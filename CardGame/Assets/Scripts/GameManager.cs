@@ -500,17 +500,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // Transfer the third deck to the battle manager
-        if (deck3.Count == 30)
-        {
-            battleManager.player2_BattleDeck = new List<Card>();
-            battleManager.player2_BattleDeck.Clear();
-            for (int i = 0; i < 30; i++)
-            {
-                battleManager.player2_BattleDeck.Add(deck3[i]);
-            }
-        }
-
         // Start the battle
         battleManager.BattleStart();
         mainMenu.SetActive(false);*/

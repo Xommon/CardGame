@@ -43,7 +43,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         currentEnergy = energy;
         currentAttack = attack;
         currentHealth = health;
-        canAttack = false;
+        canAttack = true;
 
         battleManager.isDragging = false;
     }
@@ -215,7 +215,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         {
                             battleManager.player1_DiscardPile.Add(card);
                         }
-                        else if (player == 2)
+                        else if (player == 1)
                         {
                             battleManager.player2_DiscardPile.Add(card);
                         }
