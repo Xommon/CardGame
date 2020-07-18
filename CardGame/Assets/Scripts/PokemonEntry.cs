@@ -38,6 +38,7 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
         // Attach plus and minus buttons that will affect the quantity of a card per deck
         thisPlusButton = gameObject.transform.Find("PlusButton").gameObject;
         thisMinusButton = gameObject.transform.Find("MinusButton").gameObject;
+        thisMinusButton.gameObject.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = "-";
         thisPlusButton.GetComponent<Button>().onClick.AddListener(AddCard);
         thisMinusButton.GetComponent<Button>().onClick.AddListener(RemoveCard);
 

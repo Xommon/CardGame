@@ -78,10 +78,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Disable the save button in Create-a-Deck mode until the deck has 30 cards
+        // Disable the save button in Create-a-Deck mode until the deck has 30 cards and has a name
         if (createADeckMenu.activeInHierarchy == true)
         {
-            if (tempDeck.Count != 30)
+            if (tempDeck.Count != 30 || createADeck_DeckNameEntry.text.Length < 2)
             {
                 createADeckSaveButton.GetComponent<Button>().interactable = false;
             }
@@ -170,6 +170,16 @@ public class GameManager : MonoBehaviour
         createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 60f);
     }
 
+    public void ClearDeckDisplay()
+    {
+        // Clear past card displays
+        for (int i = 0; i < allCards.Count - 1; i++)
+        {
+            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
+        }
+        tempDeck.Clear();
+    }
+
     public void SelectDeck1()
     {
         // If deck is brand new, create it. Otherwise, select it.
@@ -222,10 +232,7 @@ public class GameManager : MonoBehaviour
         editingDeck = 1;
 
         // Clear past card displays
-        for (int i = 0; i < allCards.Count - 1; i++)
-        {
-            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
-        }
+        ClearDeckDisplay();
 
         // Load current deck if it has already been made
         if (deck1.Count == 30)
@@ -273,10 +280,7 @@ public class GameManager : MonoBehaviour
         createADeckMenu.SetActive(true);
 
         // Clear past card displays
-        for (int i = 0; i < allCards.Count - 1; i++)
-        {
-            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
-        }
+        ClearDeckDisplay();
 
         // Load current deck if it has already been made
         if (deck2.Count == 30)
@@ -324,10 +328,7 @@ public class GameManager : MonoBehaviour
         createADeckMenu.SetActive(true);
 
         // Clear past card displays
-        for (int i = 0; i < allCards.Count - 1; i++)
-        {
-            GameObject.Find("PokemonEntry (" + i + ")").gameObject.GetComponent<PokemonEntry>().currentQuantity = 0;
-        }
+        ClearDeckDisplay();
 
         // Load current deck if it has already been made
         if (deck3.Count == 30)

@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
-    public CardFace player1;
-    public CardFace player2;
+    public GamePiece player1_Trainer;
+    public GamePiece player2_Trainer;
     public List<Card> player1_BattleDeck;
     public List<Card> player2_BattleDeck;
     public List<Card> tempDeck;
@@ -17,6 +17,8 @@ public class BattleManager : MonoBehaviour
     public List<Card> player2_DiscardPile;
     public List<GamePiece> player1_BattleField;
     public List<GamePiece> player2_BattleField;
+    public GameObject player1_BattleFieldObject;
+    public GameObject player2_BattleFieldObject;
     public int player1_MaxEnergy;
     public int player2_MaxEnergy;
     public int player1_CurrentEnergy;
@@ -43,7 +45,7 @@ public class BattleManager : MonoBehaviour
     public int cardDrawCounter;
     public bool cardDrawBool;
     public GameObject coinFlip;
-    public Artificial artificialIntelligence;
+    public ArtificialIntelligence artificialIntelligence;
 
     // Start is called before the first frame update
     void Start()
