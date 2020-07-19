@@ -52,10 +52,15 @@ public class BattleManager : MonoBehaviour
     public string abilityModeAbility;
     public int conversionIndex;
     public Image conversionDisplay;
+    public Button conversionPlus;
+    public Button conversionMinus;
+    public bool enemiesHighlighted;
 
     // Start is called before the first frame update
     void Start()
     {
+        enemiesHighlighted = false;
+
         // Prepare decks
         player1_BattleDeck = new List<Card>();
     }
@@ -99,12 +104,7 @@ public class BattleManager : MonoBehaviour
             cardDrawCounter++;
         }
 
-        if (cardDrawCounter == 30)
-        {
-            DrawCard(1);
-            DrawCard(2);
-        }
-        else if (cardDrawCounter == 60)
+        if (cardDrawCounter == 60)
         {
             DrawCard(1);
             DrawCard(2);
@@ -119,12 +119,7 @@ public class BattleManager : MonoBehaviour
             DrawCard(1);
             DrawCard(2);
         }
-        else if (cardDrawCounter == 150)
-        {
-            DrawCard(1);
-            DrawCard(2);
-        }
-        else if (cardDrawCounter >= 180)
+        else if (cardDrawCounter >= 150)
         {
             cardDrawCounter = 0;
             cardDrawBool = false;
@@ -132,6 +127,24 @@ public class BattleManager : MonoBehaviour
             // Determine who plays first
             playerTurn = Random.Range(1, 3);
             PlayerTurnStart();
+        }
+
+        // Enable/Disable conversion buttons
+        if (conversionIndex == 17)
+        {
+            conversionPlus.interactable = false;
+        }
+        else
+        {
+            conversionPlus.interactable = true;
+        }
+        if (conversionIndex == 0)
+        {
+            conversionMinus.interactable = false;
+        }
+        else
+        {
+            conversionMinus.interactable = true;
         }
     }
 
@@ -183,11 +196,31 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
+        int multiplierAttacker = attacker.currentAttack;
+        int multiplierDefender = defender.currentAttack;
+        if (attacker.name != "Player1Trainer" && defender.name != "Player1Trainer" && attacker.name != "Player2Trainer" && defender.name != "Player2Trainer")
+        if (attacker.weakness == defender.type)
+        {
+            multiplierDefender = defender.currentAttack * 2;
+        }
+        else if (attacker.resistance == defender.type)
+        {
+            multiplierDefender = Mathf.RoundToInt(defender.currentAttack / 2);
+        }
+        if (defender.weakness == attacker.type)
+        {
+            multiplierAttacker = attacker.currentAttack * 2;
+        }
+        else if (defender.resistance == attacker.type)
+        {
+            multiplierAttacker = Mathf.RoundToInt(attacker.currentAttack / 2);
+        }
+
         if (attacker.player != defender.player && attacker.canAttack)
         {
             if ((playerTurn == 1 && !attackInProgress) || playerTurn == 2)
             {
-
+                attacker.HighlightEnemies();
                 attacker.counter = 0;
                 defender.counter = 0;
                 attackInProgress = true;
@@ -207,8 +240,8 @@ public class BattleManager : MonoBehaviour
                     {
                         if (defender.shielded)
                         {
-                            attacker.currentHealth -= defender.currentAttack;
-                            attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            attacker.currentHealth -= multiplierDefender;
+                            attacker.damageDisplay.text = "-" + multiplierDefender;
                             defender.shielded = false;
                         }
                         else
@@ -222,8 +255,8 @@ public class BattleManager : MonoBehaviour
                             }
                             else
                             {
-                                attacker.currentHealth -= defender.currentAttack;
-                                attacker.damageDisplay.text = "-" + defender.currentAttack;
+                                attacker.currentHealth -= multiplierDefender;
+                                attacker.damageDisplay.text = "-" + multiplierDefender;
                             }
                         }
                     }
@@ -238,8 +271,8 @@ public class BattleManager : MonoBehaviour
                         }
                         else
                         {
-                            defender.currentHealth -= attacker.currentAttack;
-                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                            defender.currentHealth -= multiplierAttacker;
+                            defender.damageDisplay.text = "-" + multiplierAttacker;
                         }
                     }
                     else
@@ -247,8 +280,8 @@ public class BattleManager : MonoBehaviour
                         if (attacker.shielded)
                         {
                             attacker.damageDisplay.text = "Shield";
-                            defender.currentHealth -= attacker.currentAttack;
-                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                            defender.currentHealth -= multiplierAttacker;
+                            defender.damageDisplay.text = "-" + multiplierAttacker;
                             if (defender.attack > 0)
                             {
                                 attacker.shielded = false;
@@ -257,8 +290,8 @@ public class BattleManager : MonoBehaviour
                         else if (defender.shielded)
                         {
                             defender.damageDisplay.text = "Shield";
-                            attacker.currentHealth -= defender.currentAttack;
-                            attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            attacker.currentHealth -= multiplierDefender;
+                            attacker.damageDisplay.text = "-" + multiplierDefender;
                             if (attacker.attack > 0)
                             {
                                 defender.shielded = false;
@@ -266,19 +299,19 @@ public class BattleManager : MonoBehaviour
                         }
                         else
                         {
-                            attacker.currentHealth -= defender.currentAttack;
-                            attacker.damageDisplay.text = "-" + defender.currentAttack;
-                            defender.currentHealth -= attacker.currentAttack;
-                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                            attacker.currentHealth -= multiplierDefender;
+                            attacker.damageDisplay.text = "-" + multiplierDefender;
+                            defender.currentHealth -= multiplierAttacker;
+                            defender.damageDisplay.text = "-" + multiplierAttacker;
                         }
                     }
                 }
                 else
                 {
-                    attacker.currentHealth -= defender.currentAttack;
-                    attacker.damageDisplay.text = "-" + defender.currentAttack;
-                    defender.currentHealth -= attacker.currentAttack;
-                    defender.damageDisplay.text = "-" + attacker.currentAttack;
+                    attacker.currentHealth -= multiplierDefender;
+                    attacker.damageDisplay.text = "-" + multiplierDefender;
+                    defender.currentHealth -= multiplierAttacker;
+                    defender.damageDisplay.text = "-" + multiplierAttacker;
                 }
             }
         }
@@ -344,7 +377,10 @@ public class BattleManager : MonoBehaviour
             bigAnnouncement.text = "Your turn";
             endTurnButton.interactable = true;
             playerTurn = 1;
-            player1_MaxEnergy++;
+            if (player1_MaxEnergy < 9)
+            {
+                player1_MaxEnergy++;
+            }
             player1_CurrentEnergy = player1_MaxEnergy;
             DrawCard(1);
             if (player1_BattleField.Count > 0)
@@ -373,7 +409,10 @@ public class BattleManager : MonoBehaviour
             bigAnnouncement.text = "Opponent's turn";
             endTurnButton.interactable = false;
             playerTurn = 2;
-            player2_MaxEnergy++;
+            if (player2_MaxEnergy < 9)
+            {
+                player2_MaxEnergy++;
+            }
             player2_CurrentEnergy = player2_MaxEnergy;
             DrawCard(2);
             if (player2_BattleField.Count > 0)
@@ -390,6 +429,12 @@ public class BattleManager : MonoBehaviour
                         player2_BattleField[i].canAttack = true;
                     }
                 }
+            }
+
+            // Unhighlight enemies
+            if (enemiesHighlighted)
+            {
+                FindObjectOfType<GamePiece>().HighlightEnemies();
             }
         }
     }

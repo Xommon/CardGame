@@ -31,6 +31,9 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject damageEffect;
     public TextMeshProUGUI damageDisplay;
     public bool damaged;
+    public bool targetable;
+    public string weakness;
+    public string resistance;
 
     // Abilities
     public GameObject guardEffect;
@@ -57,7 +60,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         currentAttack = attack;
         currentHealth = health;
         ability = card.ability;
-        if (card.ability == "Quick")
+        if (ability == "Quick")
         {
             canAttack = true;
         }
@@ -66,6 +69,14 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             canAttack = false;
         }
         battleManager.isDragging = false;
+        if (ability == "Guard")
+        {
+            guarding = true;
+        }
+        if (ability == "Convert" && player == 2)
+        {
+            type = FindObjectOfType<MakeACard>().types[Random.Range(0, FindObjectOfType<MakeACard>().types.Count)];
+        }
     }
     
     void FixedUpdate()
@@ -124,83 +135,125 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (type == "Bug")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(170, 240, 90, 255);
+            weakness = "Flying";
+            resistance = "";
         }
         else if (type == "Dark")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(25, 25, 25, 255);
+            weakness = "Bug";
+            resistance = "Psychic";
         }
         else if (type == "Dragon")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(84, 38, 183, 255);
+            weakness = "Fairy";
+            resistance = "";
         }
         else if (type == "Electric")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(222, 207, 37, 255);
+            weakness = "Ground";
+            resistance = "";
         }
         else if (type == "Fairy")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(255, 65, 220, 255);
+            weakness = "Poison";
+            resistance = "Dragon";
         }
         else if (type == "Fighting")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(94, 31, 12, 255);
+            weakness = "Psychic";
+            resistance = "";
         }
         else if (type == "Fire")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(255, 33, 28, 255);
+            weakness = "Water";
+            resistance = "";
         }
         else if (type == "Flying")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(153, 138, 255, 255);
+            weakness = "Ice";
+            resistance = "Ground";
         }
         else if (type == "Ghost")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(51, 31, 75, 255);
+            weakness = "Dark";
+            resistance = "Normal";
         }
         else if (type == "Grass")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(75, 255, 55, 255);
+            weakness = "Fire";
+            resistance = "";
         }
         else if (type == "Ground")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(226, 181, 97, 255);
+            weakness = "Grass";
+            resistance = "Electric";
         }
         else if (type == "Ice")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(67, 255, 255, 255);
+            weakness = "Fire";
+            resistance = "";
         }
         else if (type == "Normal")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(205, 184, 144, 255);
+            weakness = "Fighting";
+            resistance = "Ghost";
         }
         else if (type == "Poison")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(97, 21, 62, 255);
+            weakness = "Psychic";
+            resistance = "";
         }
         else if (type == "Psychic")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(255, 50, 123, 255);
+            weakness = "Bug";
+            resistance = "Fighting";
         }
         else if (type == "Rock")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(162, 94, 45, 255);
+            weakness = "Water";
+            resistance = "";
         }
         else if (type == "Steel")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(142, 142, 142, 255);
+            weakness = "Ground";
+            resistance = "Poison";
         }
         else if (type == "Water")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(62, 158, 255, 255);
+            weakness = "Electric";
+            resistance = "";
         }
-        else if (type == "Sound")
+        /*else if (type == "Sound")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(28, 31, 120, 255);
-        }
+        }*/
 
         // Update stats on card
         attackDisplay.text = currentAttack.ToString();
         healthDisplay.text = currentHealth.ToString();
+
+        // Mark highlighted enemies
+        if (targetable)
+        {
+            gameObject.GetComponent<Image>().color = new Color32(255, 0, 0, 150);
+        }
 
         // Change colour of text to indicate a change from the default stats
         if (currentHealth < health)
@@ -261,7 +314,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                     if (counter >= 160)
                     {
                         // The Pokemon has been knocked out
-                        if (card.ability == "Explosive")
+                        if (card.ability == "Explosive" && !disabled)
                         {
                             // Damage all of the player's Pokemon
                             for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
@@ -334,8 +387,8 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().card = gameObject.GetComponent<GamePiece>().card;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().attack = gameObject.GetComponent<GamePiece>().attack;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().health = gameObject.GetComponent<GamePiece>().health;
-                battleManager.selectedGamePiece.GetComponent<GamePiece>().currentAttack = gameObject.GetComponent<GamePiece>().currentAttack;
-                battleManager.selectedGamePiece.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().currentHealth;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().currentAttack = gameObject.GetComponent<GamePiece>().attack;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().health;
             }
             else if (player == 2)
             {
@@ -353,8 +406,6 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             {
                 if (battleManager.abilityModeAbility == "Heal")
                 {
-                    // Healing doesn't work at all
-
                     // If the target is damaged, heal it
                     if (gameObject.GetComponent<GamePiece>().currentHealth < gameObject.GetComponent<GamePiece>().card.health)
                     {
@@ -374,6 +425,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             battleManager.abilityMode = false;
             battleManager.abilityModeAbility = "";
             battleManager.abilityOverlay.SetActive(false);
+            battleManager.abilityOverlay2.SetActive(false);
         }
         else
         {
@@ -398,7 +450,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         battleManager.selectedGamePiece = gameObject.GetComponent<GamePiece>();
 
                         // Highlight all other Pokemon and trainers that can be targetted
-
+                        HighlightEnemies();
                     }
                     else
                     {
@@ -409,6 +461,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         {
                             gameObject.GetComponent<Image>().color = new Color32(150, 255, 150, 255);
                         }
+                        HighlightEnemies();
                     }
                 }
                 else
@@ -416,7 +469,16 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                     // Attack the target piece with the selected game piece
                     if (battleManager.selectedGamePiece != null)
                     {
-                        battleManager.Attack(battleManager.selectedGamePiece, eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>());
+                        if (eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>().targetable)
+                        {
+                            battleManager.Attack(battleManager.selectedGamePiece, eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>());
+                        }
+                        else
+                        {
+                            battleManager.announcementCounter = 0;
+                            battleManager.smallAnnouncement.gameObject.SetActive(true);
+                            battleManager.smallAnnouncement.text = "You must attack guarding Pokémon first.";
+                        }
                     }
                 }
             }
@@ -438,6 +500,11 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 gameObject.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
             }
         }
+
+        if (targetable)
+        {
+            gameObject.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -447,6 +514,57 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (isSelected == false)
         {
             gameObject.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
+        }
+    }
+
+    public void HighlightEnemies()
+    {
+        if (!battleManager.enemiesHighlighted)
+        {
+            battleManager.enemiesHighlighted = true;
+            bool guardingPokemonExists = false;
+            for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+            {
+                if (battleManager.player2_BattleField[i].guarding)
+                {
+                    guardingPokemonExists = true;
+                    break;
+                }
+            }
+
+            if (guardingPokemonExists)
+            {
+                for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+                {
+                    if (battleManager.player2_BattleField[i].guarding)
+                    {
+                        battleManager.player2_BattleField[i].targetable = true;
+                    }
+                    else
+                    {
+                        battleManager.player2_BattleField[i].targetable = false;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+                {
+                    battleManager.player2_BattleField[i].targetable = true;
+                }
+                battleManager.player2_Trainer.targetable = true;
+            }
+        }
+        else
+        {
+            battleManager.enemiesHighlighted = false;
+            for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+            {
+                battleManager.player2_BattleField[i].targetable = false;
+                battleManager.player2_BattleField[i].GetComponent<Image>().color = new Color32(255, 0, 0, 0);
+            }
+            battleManager.player2_Trainer.targetable = false;
+            battleManager.player2_Trainer.GetComponent<Image>().color = new Color32(255, 0, 0, 0);
         }
     }
 }

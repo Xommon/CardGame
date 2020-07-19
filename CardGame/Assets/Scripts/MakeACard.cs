@@ -448,7 +448,7 @@ public class MakeACard : MonoBehaviour
         }
         else if (type == 8)
         {
-            weaknessType = "Ghost";
+            weaknessType = "Dark";
             resistanceType = "Normal";
         }
         else if (type == 9)

@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 5
   health: 8
   energy: 7
-  ability: Protect
+  ability: Heal
   legendary: 0
