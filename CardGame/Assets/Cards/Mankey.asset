@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Mankey
   m_EditorClassIdentifier: 
   type: Fighting
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 56
   sprite: {fileID: 3986736236841282968, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 5392773386914483470, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 8629430854024783748, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
   health: 2
   energy: 3
   ability: Quick
+  legendary: 0

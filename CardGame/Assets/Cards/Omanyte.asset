@@ -18,7 +18,7 @@ MonoBehaviour:
   cry: {fileID: 0}
   dexNumber: 138
   sprite: {fileID: -4386285598765826173, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 6172491537803308644, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -6850082086062662148, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
   health: 4

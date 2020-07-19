@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Pinsir
   m_EditorClassIdentifier: 
   type: Bug
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 127
   sprite: {fileID: 8335778689312770781, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: -7781484064844271871, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -993980237756161973, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 7
   health: 6
   energy: 7
   ability: Guard
+  legendary: 0

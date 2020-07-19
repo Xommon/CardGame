@@ -118,9 +118,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         if (!battleManager.isDragging)
         {
             // Put the card back into the slot where the dummy was
-            Destroy(GameObject.Find("New Game Object"));
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeHolder2.transform.GetSiblingIndex());
+            Destroy(GameObject.Find("New Game Object"));
 
             // Return the card back to its original size
             gameObject.transform.localScale = new Vector3(1.0f, 0.98f, gameObject.transform.localScale.z);

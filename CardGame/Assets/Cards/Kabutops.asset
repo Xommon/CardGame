@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Kabutops
   m_EditorClassIdentifier: 
   type: Rock
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 141
   sprite: {fileID: -2136371633177058792, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 6172491537803308644, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -5390175576181986485, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 6
   health: 4
   energy: 6
   ability: 
+  legendary: 0

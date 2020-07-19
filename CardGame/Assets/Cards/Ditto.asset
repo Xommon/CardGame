@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Ditto
   m_EditorClassIdentifier: 
   type: Normal
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 132
   sprite: {fileID: 5954917201201988778, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 2583609812203033409, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -1517429617377971403, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
   health: 2
   energy: 2
   ability: Transform
+  legendary: 0

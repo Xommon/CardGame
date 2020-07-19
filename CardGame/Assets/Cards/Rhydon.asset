@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Rhydon
   m_EditorClassIdentifier: 
   type: Rock
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 111
   sprite: {fileID: -2175875088530018366, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: -1923539896265629339, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 4394341116526431016, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 5
   health: 8
   energy: 7
   ability: Guard
+  legendary: 0

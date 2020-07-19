@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Goldeen
   m_EditorClassIdentifier: 
   type: Water
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 118
   sprite: {fileID: 5114813235337980825, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -6797817447749179375, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
   health: 2
   energy: 2
   ability: 
+  legendary: 0

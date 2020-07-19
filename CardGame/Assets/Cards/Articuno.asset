@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Articuno
   m_EditorClassIdentifier: 
   type: Ice
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 144
   sprite: {fileID: 2688983395813173749, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: -5222788323760576981, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 1777830377951763411, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 8
   health: 7

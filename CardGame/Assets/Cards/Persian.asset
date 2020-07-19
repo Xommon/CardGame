@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Persian
   m_EditorClassIdentifier: 
   type: Normal
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 53
   sprite: {fileID: -2387149740149657207, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 4544235448077845365, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 8629430854024783748, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 5
   health: 4
   energy: 5
   ability: 
+  legendary: 0

@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Wigglytuff
   m_EditorClassIdentifier: 
   type: Fairy
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 40
   sprite: {fileID: -6364390302226214278, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 8629430854024783748, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 4
   health: 3
   energy: 3
   ability: 
+  legendary: 0

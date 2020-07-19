@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Mewtwo
   m_EditorClassIdentifier: 
   type: Psychic
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 150
   sprite: {fileID: -6824651787269201462, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: -5222788323760576981, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -3619318113937401022, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 9
   health: 8

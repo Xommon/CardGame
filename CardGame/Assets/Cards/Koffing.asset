@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Koffing
   m_EditorClassIdentifier: 
   type: Poison
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 109
   sprite: {fileID: -2039592724108858814, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 4544235448077845365, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: 4089420309411551106, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
   health: 5
   energy: 4
   ability: Toxic
+  legendary: 0

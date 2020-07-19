@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Diglett
   m_EditorClassIdentifier: 
   type: Ground
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 50
   sprite: {fileID: 7781830451349620883, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 7608924141058073638, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -1919771139767175210, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 3
   health: 2
   energy: 3
   ability: Quick
+  legendary: 0

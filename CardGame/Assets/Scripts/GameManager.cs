@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     public Button createACardButton;
 
     // Scripts
-    //public BattleManager battleManager;
+    public BattleManager battleManager;
 
     // Start is called before the first frame update
     void Start()
@@ -483,7 +483,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayButton()
     {
-        /*// Transfer the current deck to the battle manager
+        // Transfer the current deck to the battle manager
         battleManager.player1_BattleDeck.Clear();
         for (int i = 0; i < 30; i++)
         {
@@ -503,7 +503,7 @@ public class GameManager : MonoBehaviour
 
         // Start the battle
         battleManager.BattleStart();
-        mainMenu.SetActive(false);*/
+        mainMenu.SetActive(false);
     }
 
     public void AllCardTypeTally()

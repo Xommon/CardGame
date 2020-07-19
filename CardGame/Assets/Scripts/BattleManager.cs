@@ -23,8 +23,8 @@ public class BattleManager : MonoBehaviour
     public int player2_MaxEnergy;
     public int player1_CurrentEnergy;
     public int player2_CurrentEnergy;
-    public TextMesh player1_EnergyDisplay;
-    public TextMesh player2_EnergyDisplay;
+    public TextMeshProUGUI player1_EnergyDisplay;
+    public TextMeshProUGUI player2_EnergyDisplay;
     public TextMeshProUGUI player1_HealthDisplay;
     public TextMeshProUGUI player2_HealthDisplay;
     public GameManager gameManager;
@@ -44,15 +44,20 @@ public class BattleManager : MonoBehaviour
     public Button endTurnButton;
     public int cardDrawCounter;
     public bool cardDrawBool;
-    public GameObject coinFlip;
     public ArtificialIntelligence artificialIntelligence;
+    public GameObject abilityOverlay;
+    public GameObject abilityOverlay2;
+    public GameObject conversionPrompt;
+    public bool abilityMode;
+    public string abilityModeAbility;
+    public int conversionIndex;
+    public Image conversionDisplay;
 
     // Start is called before the first frame update
     void Start()
     {
         // Prepare decks
         player1_BattleDeck = new List<Card>();
-        //player2_BattleDeck = new List<Card>();
     }
 
     // Update is called once per frame
@@ -64,8 +69,8 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyDown("m"))
         {
-            DrawCard(1);
-            DrawCard(2);
+            Destroy(artificialIntelligence.physicalCardList[artificialIntelligence.physicalCardList.Count].gameObject);
+            artificialIntelligence.physicalCardList.RemoveAt(artificialIntelligence.physicalCardList.Count);
         }
 
         if (sentIsNotDragging)
@@ -84,6 +89,9 @@ public class BattleManager : MonoBehaviour
                 smallAnnouncement.gameObject.SetActive(false);
             }
         }
+
+        // Conversion display
+        conversionDisplay.sprite = FindObjectOfType<MakeACard>().typeSprites[conversionIndex];
 
         // Start the initial card draw counter
         if (cardDrawBool)
@@ -122,17 +130,8 @@ public class BattleManager : MonoBehaviour
             cardDrawBool = false;
 
             // Determine who plays first
-            if (Random.Range(1, 3) == 1)
-            {
-                playerTurn = 2;
-                PlayerTurnStart();
-            }
-            else
-            {
-                playerTurn = 1;
-                artificialIntelligence.on = true;
-                PlayerTurnStart();
-            }
+            playerTurn = Random.Range(1, 3);
+            PlayerTurnStart();
         }
     }
 
@@ -184,26 +183,126 @@ public class BattleManager : MonoBehaviour
 
     public void Attack(GamePiece attacker, GamePiece defender)
     {
-        if (attacker.player != defender.player && !attackInProgress)
+        if (attacker.player != defender.player && attacker.canAttack)
         {
-            attacker.counter = 0;
-            defender.counter = 0;
-            attackInProgress = true;
-            defender.currentHealth -= attacker.currentAttack;
-            attacker.currentHealth -= defender.currentAttack;
-            attacker.canAttack = false;
-            attacker.isSelected = false;
-            defender.isSelected = false;
-            selectedGamePiece = null;
-            attacker.damageDisplay.text = "-" + defender.currentAttack;
-            attacker.damageEffect.SetActive(true);
-            attacker.damageEffect.GetComponent<Animator>().enabled = true;
-            attacker.damaged = true;
-            defender.damageDisplay.text = "-" + attacker.currentAttack;
-            defender.damageEffect.SetActive(true);
-            defender.damageEffect.GetComponent<Animator>().enabled = true;
-            defender.damaged = true;
+            if ((playerTurn == 1 && !attackInProgress) || playerTurn == 2)
+            {
+
+                attacker.counter = 0;
+                defender.counter = 0;
+                attackInProgress = true;
+                attacker.canAttack = false;
+                attacker.isSelected = false;
+                defender.isSelected = false;
+                selectedGamePiece = null;
+                attacker.damageEffect.SetActive(true);
+                attacker.damageEffect.GetComponent<Animator>().enabled = true;
+                attacker.damaged = true;
+                defender.damageEffect.SetActive(true);
+                defender.damageEffect.GetComponent<Animator>().enabled = true;
+                defender.damaged = true;
+                if (defender.name != "Player1Trainer" && defender.name != "Player2Trainer")
+                {
+                    if (attacker.toxic)
+                    {
+                        if (defender.shielded)
+                        {
+                            attacker.currentHealth -= defender.currentAttack;
+                            attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            defender.shielded = false;
+                        }
+                        else
+                        {
+                            defender.currentHealth -= defender.currentHealth;
+                            defender.damageDisplay.text = "Toxic";
+                            if (defender.toxic)
+                            {
+                                attacker.currentHealth -= attacker.currentHealth;
+                                attacker.damageDisplay.text = "Toxic";
+                            }
+                            else
+                            {
+                                attacker.currentHealth -= defender.currentAttack;
+                                attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            }
+                        }
+                    }
+                    else if (defender.toxic)
+                    {
+                        attacker.currentHealth -= attacker.currentHealth;
+                        attacker.damageDisplay.text = "Toxic";
+                        if (attacker.toxic)
+                        {
+                            defender.currentHealth -= defender.currentHealth;
+                            defender.damageDisplay.text = "Toxic";
+                        }
+                        else
+                        {
+                            defender.currentHealth -= attacker.currentAttack;
+                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                        }
+                    }
+                    else
+                    {
+                        if (attacker.shielded)
+                        {
+                            attacker.damageDisplay.text = "Shield";
+                            defender.currentHealth -= attacker.currentAttack;
+                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                            if (defender.attack > 0)
+                            {
+                                attacker.shielded = false;
+                            }
+                        }
+                        else if (defender.shielded)
+                        {
+                            defender.damageDisplay.text = "Shield";
+                            attacker.currentHealth -= defender.currentAttack;
+                            attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            if (attacker.attack > 0)
+                            {
+                                defender.shielded = false;
+                            }
+                        }
+                        else
+                        {
+                            attacker.currentHealth -= defender.currentAttack;
+                            attacker.damageDisplay.text = "-" + defender.currentAttack;
+                            defender.currentHealth -= attacker.currentAttack;
+                            defender.damageDisplay.text = "-" + attacker.currentAttack;
+                        }
+                    }
+                }
+                else
+                {
+                    attacker.currentHealth -= defender.currentAttack;
+                    attacker.damageDisplay.text = "-" + defender.currentAttack;
+                    defender.currentHealth -= attacker.currentAttack;
+                    defender.damageDisplay.text = "-" + attacker.currentAttack;
+                }
+            }
         }
+    }
+
+    public void Damage(GamePiece defender, int damageAmount)
+    {
+        if (defender.shielded)
+        {
+            defender.damageDisplay.text = "Shield";
+            defender.shielded = false;
+        }
+        else
+        {
+            defender.currentHealth -= damageAmount;
+            defender.damageDisplay.text = "-" + damageAmount;
+        }
+        defender.counter = 0;
+        attackInProgress = true;
+        defender.isSelected = false;
+        selectedGamePiece = null;
+        defender.damageEffect.SetActive(true);
+        defender.damageEffect.GetComponent<Animator>().enabled = true;
+        defender.damaged = true;
     }
 
     public void DrawCard(int player)
@@ -230,6 +329,7 @@ public class BattleManager : MonoBehaviour
                 GameObject drawnCard = Instantiate(opponentCard, player2_HandObject.transform);
                 drawnCard.GetComponent<CardFace>().card = player2_BattleDeck[0];
                 player2_BattleDeck.RemoveAt(0);
+                artificialIntelligence.physicalCardList.Add(drawnCard);
             }
         }
     }
@@ -246,10 +346,27 @@ public class BattleManager : MonoBehaviour
             playerTurn = 1;
             player1_MaxEnergy++;
             player1_CurrentEnergy = player1_MaxEnergy;
+            DrawCard(1);
+            if (player1_BattleField.Count > 0)
+            {
+                for (int i = 0; i < player1_BattleField.Count; i++)
+                {
+                    if (player1_BattleField[i].paralysed)
+                    {
+                        player1_BattleField[i].canAttack = false;
+                        player1_BattleField[i].paralysed = false;
+                    }
+                    else
+                    {
+                        player1_BattleField[i].canAttack = true;
+                    }
+                }
+            }
         }
         else if (playerTurn == 1)
         {
             // Opponent's turn
+            artificialIntelligence.on = true;
             artificialIntelligence.phase = ArtificialIntelligence.Phase.Waiting;
             announcementCounter = 0;
             bigAnnouncement.gameObject.SetActive(true);
@@ -258,19 +375,63 @@ public class BattleManager : MonoBehaviour
             playerTurn = 2;
             player2_MaxEnergy++;
             player2_CurrentEnergy = player2_MaxEnergy;
+            DrawCard(2);
+            if (player2_BattleField.Count > 0)
+            {
+                for (int i = 0; i < player2_BattleField.Count; i++)
+                {
+                    if (player2_BattleField[i].paralysed)
+                    {
+                        player2_BattleField[i].canAttack = false;
+                        player2_BattleField[i].paralysed = false;
+                    }
+                    else
+                    {
+                        player2_BattleField[i].canAttack = true;
+                    }
+                }
+            }
         }
     }
-    
+
     public void AITurnEnd()
     {
         Debug.Log("The AI has ended their turn.");
         artificialIntelligence.thinkCounter = 0;
         PlayerTurnStart();
         artificialIntelligence.on = false;
+        artificialIntelligence.possiblePlays.Clear();
     }
-    
+
     public void PlayerTurnEnd()
     {
+        // Unselect all game pieces
+        for (int i = 0; i < player1_BattleField.Count; i++)
+        {
+            player1_BattleField[i].isSelected = false;
+            player1_BattleField[i].GetComponent<Image>().color = new Color32(255, 255, 255, 0);
+            selectedGamePiece = null;
+        }
+        artificialIntelligence.on = true;
         PlayerTurnStart();
+    }
+
+    public void ConvertPlusButton()
+    {
+        conversionIndex += 1;
+    }
+
+    public void ConvertMinusButton()
+    {
+        conversionIndex -= 1;
+    }
+
+    public void ConvertButton()
+    {
+        selectedGamePiece.type = FindObjectOfType<MakeACard>().types[conversionIndex];
+        conversionPrompt.SetActive(false);
+        abilityOverlay.SetActive(false);
+        abilityMode = false;
+        abilityModeAbility = "";
     }
 }

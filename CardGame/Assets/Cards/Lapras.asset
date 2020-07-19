@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: Lapras
   m_EditorClassIdentifier: 
   type: Ice
+  weaknessType: 
+  resistanceType: 
   cry: {fileID: 0}
   dexNumber: 131
   sprite: {fileID: -7848370954903247462, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
-  background: {fileID: 2628722231908392065, guid: e0dd1c60ccef0b347ba709cfceac85dc,
+  background: {fileID: -6797817447749179375, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 5
   health: 8
   energy: 6
   ability: 
+  legendary: 0
