@@ -103,6 +103,11 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        if (selectedGamePiece == null && enemiesHighlighted)
+        {
+            FindObjectOfType<GamePiece>().HighlightEnemies();
+        }
+
         // Conversion display
         conversionDisplay.sprite = FindObjectOfType<MakeACard>().typeSprites[conversionIndex];
 
@@ -370,27 +375,43 @@ public class BattleManager : MonoBehaviour
     {
         if (player == 1)
         {
-            if (player1_BattleDeck.Count > 0)
+            if (player1_Hand.Count < 10)
             {
-                player1_Hand.Add(player1_BattleDeck[0]);
-                GameObject drawnCard = Instantiate(card, player1_HandObject.transform);
-                drawnCard.GetComponent<CardFace>().card = player1_BattleDeck[0];
-                player1_BattleDeck.RemoveAt(0);
+                if (player1_BattleDeck.Count > 0)
+                {
+                    player1_Hand.Add(player1_BattleDeck[0]);
+                    GameObject drawnCard = Instantiate(card, player1_HandObject.transform);
+                    drawnCard.GetComponent<CardFace>().card = player1_BattleDeck[0];
+                    player1_BattleDeck.RemoveAt(0);
+                }
             }
             else
             {
-                Debug.Log("Out of cards!");
+                announcementCounter = 0;
+                smallAnnouncement.gameObject.SetActive(true);
+                smallAnnouncement.text = "Your hand is too full to draw a card!";
+                player1_BattleDeck.RemoveAt(0);
             }
         }
         else
         {
-            if (player2_BattleDeck.Count > 0)
+            if (player2_Hand.Count < 10)
             {
-                player2_Hand.Add(player2_BattleDeck[0]);
-                GameObject drawnCard = Instantiate(opponentCard, player2_HandObject.transform);
-                drawnCard.GetComponent<CardFace>().card = player2_BattleDeck[0];
+                if (player2_BattleDeck.Count > 0)
+                {
+                    player2_Hand.Add(player2_BattleDeck[0]);
+                    GameObject drawnCard = Instantiate(opponentCard, player2_HandObject.transform);
+                    drawnCard.GetComponent<CardFace>().card = player2_BattleDeck[0];
+                    player2_BattleDeck.RemoveAt(0);
+                    artificialIntelligence.physicalCardList.Add(drawnCard);
+                }
+            }
+            else
+            {
+                announcementCounter = 0;
+                smallAnnouncement.gameObject.SetActive(true);
+                smallAnnouncement.text = "Your opponent's hand is too full to draw a card!";
                 player2_BattleDeck.RemoveAt(0);
-                artificialIntelligence.physicalCardList.Add(drawnCard);
             }
         }
     }

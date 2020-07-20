@@ -104,7 +104,6 @@ public class ArtificialIntelligence : MonoBehaviour
             }
 
             // Choose which cards out of the possiblities to play
-            Debug.Log("AI: ''Calculating possibilities ...''");
             if (possiblePlays.Count == 0)
             {
                 Debug.Log("AI: ''I can't play any Pokemon.''");
@@ -137,6 +136,7 @@ public class ArtificialIntelligence : MonoBehaviour
                 }
 
                 PlayCard(mostExpensiveCard);
+                thinkCounter = 175;
                 Phase_PlayingCards();
             }
         }
@@ -278,13 +278,26 @@ public class ArtificialIntelligence : MonoBehaviour
         else
         {
             Debug.Log("AI: ''I don't have any Pokemon that can attack.''");
+            // Reassess the hand for Pokemon that can be played
+            possiblePlays.Clear();
+            for (int i = 0; i < battleManager.player2_Hand.Count; i++)
+            {
+                if (battleManager.player2_Hand[i].energy <= battleManager.player2_CurrentEnergy)
+                {
+                    possiblePlays.Add(battleManager.player2_Hand[i]);
+                }
+            }
+            Debug.Log(possiblePlays.Count + " possible plays after attacking ...");
             if (possiblePlays.Count == 0)
             {
                 endingTurn = true;
+                Debug.Log("AI: ''I can't play any more cards.''");
             }
             else
             {
-                Phase_PlayingCards();
+                //Phase_PlayingCards();
+                thinkCounter = 150;
+                phase = Phase.Waiting;
             }
         }
     }
@@ -301,15 +314,15 @@ public class ArtificialIntelligence : MonoBehaviour
         battleManager.player2_BattleField.Add(newGamePiece);
 
         // Remove the card from the hand
-        for (int i = 0; i < physicalCardList.Count - 1; i++)
+        for (int i = 0; i < physicalCardList.Count; i++)
         {
             if (physicalCardList[i].GetComponent<CardFace>().card == card)
             {
                 Destroy(physicalCardList[i].gameObject);
-                physicalCardList.RemoveAt(i);
+                physicalCardList.Remove(physicalCardList[i]);
             }
         }
-
+        
         battleManager.player2_Hand.Remove(card);
 
         // Ability targets

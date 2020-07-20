@@ -188,6 +188,12 @@ public class GameManager : MonoBehaviour
 
         // Update the length of the scroll area
         createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 60f);
+
+        // DEBUG
+        if (Input.GetKeyDown("m"))
+        {
+            EnergyCostTally(tempDeck);
+        }
     }
 
     public void ClearDeckDisplay()
@@ -534,6 +540,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < allCards.Count; i++)
         {
             Debug.Log(allCards[i].type);
+        }
+    }
+
+    public void EnergyCostTally(List<Card> deck)
+    {
+        for (int i = 0; i < deck.Count; i++)
+        {
+            Debug.Log(deck[i].energy);
         }
     }
 }
