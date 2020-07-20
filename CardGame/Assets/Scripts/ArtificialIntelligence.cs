@@ -10,10 +10,14 @@ public class ArtificialIntelligence : MonoBehaviour
     public GameManager gameManager;
     public List<Card> possiblePlays;
     public List<GamePiece> possibleAttacks;
+    public List<GamePiece> possibleTargets;
     public List<GameObject> physicalCardList;
     public GamePiece gamePiece;
-    public enum Phase { Waiting, PlayingCards, Attacking };
+    public enum Phase { Waiting, PlayingCards, Attacking, ReadyToAttack };
     public Phase phase;
+    public bool endingTurn;
+    public bool pokemonDamaged1;
+    public bool pokemonDamaged2;
 
     void Start()
     {
@@ -36,23 +40,60 @@ public class ArtificialIntelligence : MonoBehaviour
                     {
                         Phase_PlayingCards();
                     }
+                    else if (phase == Phase.ReadyToAttack)
+                    {
+                        Phase_Attacking();
+                    }
                 }
             }
         }
         else
         {
             thinkCounter = 0;
+            endingTurn = false;
             phase = Phase.Waiting;
+        }
+
+        if (endingTurn)
+        {
+            pokemonDamaged1 = false;
+            pokemonDamaged2 = false;
+            for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+            {
+                if (battleManager.player2_BattleField[i].damaged)
+                {
+                    pokemonDamaged2 = true;
+                    break;
+                }
+            }
+            for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+            {
+                if (battleManager.player1_BattleField[i].damaged)
+                {
+                    pokemonDamaged1 = true;
+                    break;
+                }
+            }
+
+            if (pokemonDamaged1 == false && pokemonDamaged2 == false)
+            {
+                battleManager.AITurnEnd();
+            }
         }
     }
 
     /// Card-Playing Phase
     public void Phase_PlayingCards()
     {
+        Debug.Log("Playing cards.");
         phase = Phase.PlayingCards;
+        possiblePlays.Clear();
+
+        // Continue playing cards if there are less than 6 Pokemon already on the field
         if (battleManager.player2_BattleField.Count < 6)
         {
-            Debug.Log("AI: ''There is/are " + battleManager.player2_BattleField.Count + " Pokemon on the field, so I can play more.''");
+            Debug.Log("AI: " + battleManager.player2_BattleField.Count + " Pokemon on the field, so I can play more.''");
+
             // Make a list of Pokemon that can be played
             for (int i = 0; i < battleManager.player2_Hand.Count; i++)
             {
@@ -67,107 +108,54 @@ public class ArtificialIntelligence : MonoBehaviour
             if (possiblePlays.Count == 0)
             {
                 Debug.Log("AI: ''I can't play any Pokemon.''");
-                Phase_Attacking();
+                thinkCounter = 100;
+                phase = Phase.ReadyToAttack;
             }
-            else if (possiblePlays.Count == 1)
+            else
             {
-                PlayCard(possiblePlays[0]);
-                possiblePlays.RemoveAt(0);
-                Phase_Attacking();
-            }
-            else if (possiblePlays.Count == 2)
-            {
-                if (possiblePlays[0].energy + possiblePlays[1].energy <= battleManager.player2_CurrentEnergy)
+                Card mostExpensiveCard = null;
+                for (int i = 0; i < possiblePlays.Count; i++)
                 {
-                    // Play both cards if you can afford it
-                    PlayCard(possiblePlays[0]);
-                    PlayCard(possiblePlays[1]);
-                    possiblePlays.RemoveAt(0);
-                    possiblePlays.RemoveAt(0);
-                }
-                else
-                {
-                    // Choose one card randomly to play
-                    int chosenNumber = Random.Range(0, 2);
-                    PlayCard(possiblePlays[chosenNumber]);
-                    possiblePlays.RemoveAt(chosenNumber);
-                }
-
-                Phase_Attacking();
-            }
-            else if (possiblePlays.Count == 3)
-            {
-                // Try playing two cards
-                if (possiblePlays[0].energy + possiblePlays[1].energy <= battleManager.player2_CurrentEnergy)
-                {
-                    PlayCard(possiblePlays[0]);
-                    PlayCard(possiblePlays[1]);
-                    possiblePlays.RemoveAt(0);
-                    possiblePlays.RemoveAt(0);
-                    Phase_Attacking();
-                }
-                else if (possiblePlays[1].energy + possiblePlays[2].energy <= battleManager.player2_CurrentEnergy)
-                {
-                    PlayCard(possiblePlays[1]);
-                    PlayCard(possiblePlays[2]);
-                    possiblePlays.RemoveAt(1);
-                    possiblePlays.RemoveAt(1);
-                    Phase_Attacking();
-                }
-                else if (possiblePlays[0].energy + possiblePlays[2].energy <= battleManager.player2_CurrentEnergy)
-                {
-                    PlayCard(possiblePlays[0]);
-                    PlayCard(possiblePlays[2]);
-                    possiblePlays.RemoveAt(0);
-                    possiblePlays.RemoveAt(1);
-                    Phase_Attacking();
-                }
-                else
-                {
-                    // If you can't play two cards, then play one
-                    Card mostExpensiveCard = null;
-                    if (possiblePlays[0].energy == possiblePlays[1].energy && possiblePlays[0].energy == possiblePlays[2].energy)
+                    if (mostExpensiveCard == null)
                     {
-                        // Choose one card randomly to play
-                        int chosenNumber = Random.Range(0, 3);
-                        PlayCard(possiblePlays[chosenNumber]);
-                        possiblePlays.RemoveAt(chosenNumber);
-                        Phase_Attacking();
+                        mostExpensiveCard = possiblePlays[i];
                     }
                     else
                     {
-                        // Play the most expensive card
-                        for (int i = 0; i < possiblePlays.Count; i++)
+                        if (mostExpensiveCard.energy > possiblePlays[i].energy)
                         {
-                            if (mostExpensiveCard == null || possiblePlays[i].energy > mostExpensiveCard.energy)
+                            mostExpensiveCard = possiblePlays[i];
+                        }
+                        else if (mostExpensiveCard.energy == possiblePlays[i].energy)
+                        {
+                            if (Random.Range(0, 2) == 1)
                             {
                                 mostExpensiveCard = possiblePlays[i];
                             }
                         }
-
-                        PlayCard(mostExpensiveCard);
-                        possiblePlays.Remove(mostExpensiveCard);
-                        Phase_Attacking();
                     }
-
                 }
+
+                PlayCard(mostExpensiveCard);
+                Phase_PlayingCards();
             }
-            else if (possiblePlays.Count >= 4)
-            {
-                // Choose a random card to play then reassess
-                int chosenNumber = Random.Range(0, 4);
-                PlayCard(possiblePlays[chosenNumber]);
-                possiblePlays.RemoveAt(chosenNumber);
-                Phase_Attacking();
-            }
+        }
+        else
+        {
+            Debug.Log("My battle field is too full to play more Pokemon.");
+            thinkCounter = 100;
+            phase = Phase.ReadyToAttack;
         }
     }
 
     /// Attacking Phase
     public void Phase_Attacking()
     {
-        Debug.Log("The AI is in the Attack Phase.");
+        Debug.Log("AI: Deciding on an attack ...");
         phase = Phase.Attacking;
+        possibleAttacks.Clear();
+        possibleTargets.Clear();
+        thinkCounter = 0;
 
         // Ignore the game pieces that can't attack
         for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
@@ -178,77 +166,126 @@ public class ArtificialIntelligence : MonoBehaviour
             }
         }
 
-        // If there's nothing to attack with, end the turn
-        if (possibleAttacks.Count == 0)
+        if (possibleAttacks.Count > 0)
         {
-            Debug.Log("AI: ''I don't have any Pokemon that can attack.''");
-            battleManager.AITurnEnd();
-        }
-        /*else if (possibleAttacks.Count == 1)
-        {
-            Debug.Log("AI: ''I have one Pokemon that can attack ...''");
-            // Use the one game piece to attack
-            if (battleManager.player1_BattleField.Count == 0)
+            // Compile a list of targets
+            bool guardingTargetExists = false;
+            if (battleManager.player1_BattleField.Count > 0)
             {
-                // Attack the trainer if there are no other game pieces
-                Debug.Log("AI: ''Attacking the trainer!''");
-                battleManager.Attack(possibleAttacks[0], battleManager.player1_Trainer);
-                battleManager.AITurnEnd();
+                for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                {
+                    if (battleManager.player1_BattleField[i].guarding)
+                    {
+                        guardingTargetExists = true;
+                        break;
+                    }
+                }
+
+                // Must attack guarding Pokemon first
+                if (guardingTargetExists)
+                {
+                    for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                    {
+                        if (battleManager.player1_BattleField[i].guarding)
+                        {
+                            possibleTargets.Add(battleManager.player1_BattleField[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    // There are no guarding Pokemon
+                    // If the computer can take out the player now, it will
+                    int combinedPower = 0;
+                    for (int i = 0; i < possibleAttacks.Count; i++)
+                    {
+                        combinedPower += possibleAttacks[i].currentAttack;
+                    }
+                    if (combinedPower >= battleManager.player1_Trainer.currentHealth)
+                    {
+                        possibleTargets.Add(battleManager.player1_Trainer);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                        {
+                            possibleTargets.Add(battleManager.player1_BattleField[i]);
+                        }
+                    }
+                }
             }
             else
             {
-                Debug.Log("AI: ''Attacking a Pokemon!''");
-                // Attack the strongest pokemon
-                GamePiece strongestEnemy = null;
-                // Search through all of the player's active game pieces
-                for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
-                {
-                    // Assemble a list of targets that would be knocked out instantly
-                    List<GamePiece> attackIsEqualToHealth = new List<GamePiece>();
-                    if (possibleAttacks[0].attack == battleManager.player1_BattleField[i].health)
-                    {
-                        attackIsEqualToHealth.Add(battleManager.player1_BattleField[i]);
-                    }
-                    // Find the one with the highest attack stat
-                    if (strongestEnemy == null || possibleAttacks[i].attack > strongestEnemy.attack)
-                    {
-                        strongestEnemy = possibleAttacks[i];
-                    }
-                }
-                // Attack the strongest pokemon
-                Debug.Log("AI: ''I'm going to attack you now!''");
-                battleManager.Attack(possibleAttacks[0], strongestEnemy);
-                battleManager.AITurnEnd();
+                possibleTargets.Add(battleManager.player1_Trainer);
             }
-        }*/
-        /*else if (possibleAttacks.Count == 2)
-        {
-            if (battleManager.player1_BattleField.Count == 0)
-            {
-                // Attack the trainer if there are no other game pieces
-                Debug.Log("AI: ''Attacking the trainer!''");
-                thinkCounter = 0;
-                if (thinkCounter > 50)
-                {
-                    battleManager.Attack(possibleAttacks[0], battleManager.player1_Trainer);
-                    possibleAttacks.RemoveAt(0);
-                    thinkCounter = 0;
-                }
-            }
-        }*/
-        else
-        {
+
+            // Begin attacking
             // Have all Pokemon attack the player if their field is empty
             Debug.Log("AI: ''Attacking the trainer!''");
             if (battleManager.player1_BattleField.Count == 0)
             {
-                for (int i = 0; i < possibleAttacks.Count; i++)
-                {
-                    battleManager.Attack(possibleAttacks[i], battleManager.player1_Trainer);
-                }
+                battleManager.Attack(possibleAttacks[0], battleManager.player1_Trainer);
+                thinkCounter = 100;
+                phase = Phase.ReadyToAttack;
             }
+            else if (battleManager.player1_BattleField.Count > 0 && possibleAttacks.Count > 0)
+            {
+                // There are Pokemon in the way
+                GamePiece defender = null;
+                GamePiece attacker = battleManager.player2_BattleField[Random.Range(0, battleManager.player2_BattleField.Count)];
+                for (int i = 0; i < possibleTargets.Count; i++)
+                {
+                    if (defender == null)
+                    {
+                        if (attacker.currentAttack >= possibleTargets[i].currentHealth)
+                        if (attacker.currentAttack >= possibleTargets[i].currentHealth)
+                        {
+                            defender = possibleTargets[i];
+                        }
+                    }
+                    else
+                    {
+                        if (attacker.currentAttack >= possibleTargets[i].currentHealth && defender.currentAttack > possibleTargets[i].currentAttack)
+                        {
+                            defender = possibleTargets[i];
+                        }
+                    }
+                }
 
-            battleManager.AITurnEnd();
+                if (defender == null)
+                {
+                    for (int i = 0; i < possibleTargets.Count; i++)
+                    {
+                        if (defender == null)
+                        {
+                            defender = possibleTargets[i];
+                        }
+                        else
+                        {
+                            if (defender.currentHealth > possibleTargets[i].currentHealth)
+                            {
+                                defender = possibleTargets[i];
+                            }
+                        }
+                    }
+                }
+
+                battleManager.Attack(attacker, defender);
+                thinkCounter = 100;
+                phase = Phase.ReadyToAttack;
+            }
+        }
+        else
+        {
+            Debug.Log("AI: ''I don't have any Pokemon that can attack.''");
+            if (possiblePlays.Count == 0)
+            {
+                endingTurn = true;
+            }
+            else
+            {
+                Phase_PlayingCards();
+            }
         }
     }
 
@@ -274,5 +311,147 @@ public class ArtificialIntelligence : MonoBehaviour
         }
 
         battleManager.player2_Hand.Remove(card);
+
+        // Ability targets
+        if (card.ability == "Heal")
+        {
+            GamePiece mostDamagedGamePiece = null;
+            for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+            {
+                if (mostDamagedGamePiece == null)
+                {
+                    mostDamagedGamePiece = battleManager.player2_BattleField[i];
+                }
+                else
+                {
+                    if ((mostDamagedGamePiece.health - mostDamagedGamePiece.currentHealth) < (battleManager.player2_BattleField[i].health - battleManager.player2_BattleField[i].currentHealth))
+                    {
+                        mostDamagedGamePiece = battleManager.player2_BattleField[i];
+                    }
+                    else if ((mostDamagedGamePiece.health - mostDamagedGamePiece.currentHealth) == (battleManager.player2_BattleField[i].health - battleManager.player2_BattleField[i].currentHealth)) 
+                    {
+                        if (Random.Range(0, 2) == 1)
+                        {
+                            mostDamagedGamePiece = battleManager.player2_BattleField[i];
+                        }
+                    }
+                    if ((mostDamagedGamePiece.health - mostDamagedGamePiece.currentHealth) < (battleManager.player2_Trainer.health - battleManager.player2_Trainer.currentHealth))
+                    {
+                        mostDamagedGamePiece = battleManager.player2_Trainer;
+                    }
+                }
+            }
+
+            if (mostDamagedGamePiece != null)
+            {
+                if ((mostDamagedGamePiece.health - mostDamagedGamePiece.currentHealth) < card.health)
+                {
+                    mostDamagedGamePiece.currentHealth = mostDamagedGamePiece.health;
+                }
+                else
+                {
+                    mostDamagedGamePiece.currentHealth += card.health;
+                }
+            }
+        }
+        else if (card.ability == "Disable")
+        {
+            List<GamePiece> canDisable = new List<GamePiece>();
+            for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+            {
+                if (battleManager.player1_BattleField[i].ability == "Toxic" || battleManager.player1_BattleField[i].ability == "Guard" || battleManager.player1_BattleField[i].ability == "Transform" || battleManager.player1_BattleField[i].ability == "Protect" || battleManager.player1_BattleField[i].ability == "Convert" || battleManager.player1_BattleField[i].ability == "Explosive")
+                {
+                    canDisable.Add(battleManager.player1_BattleField[i]);
+                }
+            }
+
+            if (canDisable.Count > 0)
+            {
+                canDisable[Random.Range(0, canDisable.Count)].disabled = true;
+            }
+        }
+        else if (card.ability == "Paralyse")
+        {
+            GamePiece targetToParalyse = null;
+            for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+            {
+                if (targetToParalyse == null)
+                {
+                    targetToParalyse = battleManager.player1_BattleField[i];
+                }
+                else
+                {
+                    if (battleManager.player1_BattleField[i].currentAttack > targetToParalyse.currentAttack)
+                    {
+                        targetToParalyse = battleManager.player1_BattleField[i];
+                    }
+                    else if (battleManager.player1_BattleField[i].currentAttack == targetToParalyse.currentAttack)
+                    {
+                        if (Random.Range(0, 2) == 1)
+                        {
+                            targetToParalyse = battleManager.player1_BattleField[i];
+                        }
+                    }
+                }
+            }
+
+            if (targetToParalyse != null)
+            {
+                targetToParalyse.paralysed = true;
+            }
+        }
+        else if (card.ability == "Transform")
+        {
+            List<GamePiece> transformTargets = new List<GamePiece>();
+            GamePiece transformTarget = null;
+            for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+            {
+                transformTargets.Add(battleManager.player1_BattleField[i]);
+            }
+            for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+            {
+                transformTargets.Add(battleManager.player2_BattleField[i]);
+            }
+            for (int i = 0; i < transformTargets.Count; i++)
+            {
+                if (transformTarget == null)
+                {
+                    transformTarget = transformTargets[i];
+                }
+                else
+                {
+                    if (transformTargets[i].attack > transformTarget.attack)
+                    {
+                        transformTarget = transformTargets[i];
+                    }
+                    else if (transformTargets[i].attack == transformTarget.attack)
+                    {
+                        if (transformTargets[i].health > transformTarget.health)
+                        {
+                            transformTarget = transformTargets[i];
+                        }
+                        else if (transformTargets[i].health == transformTarget.health)
+                        {
+                            if (Random.Range(0, 2) == 1)
+                            {
+                                transformTarget = transformTargets[i];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (transformTarget != null)
+            {
+                newGamePiece.ability = "Transform";
+                newGamePiece.transformOriginalCard = card;
+                newGamePiece.transformed = true;
+                newGamePiece.card = transformTarget.card;
+            }
+            else
+            {
+                newGamePiece.transformed = false;
+            }
+        }
     }
 }

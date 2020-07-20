@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class BattleManager : MonoBehaviour
 {
     public GamePiece player1_Trainer;
+    public GamePiece player1_TrainerPrefab;
     public GamePiece player2_Trainer;
+    public GamePiece player2_TrainerPrefab;
     public List<Card> player1_BattleDeck;
     public List<Card> player2_BattleDeck;
     public List<Card> tempDeck;
@@ -55,6 +57,14 @@ public class BattleManager : MonoBehaviour
     public Button conversionPlus;
     public Button conversionMinus;
     public bool enemiesHighlighted;
+    public GameObject quitMenu;
+    public GameObject endGameMenu;
+    public GameObject winningPokemonList;
+    public GameObject winningPokemonEntry;
+    public TextMeshProUGUI endGameText;
+    public bool gameOver;
+    public int winner;
+    public bool quitGame;
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +73,10 @@ public class BattleManager : MonoBehaviour
 
         // Prepare decks
         player1_BattleDeck = new List<Card>();
+        if (gameManager.deck3.Count == 30)
+        {
+            player2_BattleDeck = gameManager.deck3;
+        }
     }
 
     // Update is called once per frame
@@ -71,12 +85,6 @@ public class BattleManager : MonoBehaviour
         // Update player stats
         player1_EnergyDisplay.text = player1_CurrentEnergy + "/" + player1_MaxEnergy;
         player2_EnergyDisplay.text = player2_CurrentEnergy + "/" + player2_MaxEnergy;
-
-        if (Input.GetKeyDown("m"))
-        {
-            Destroy(artificialIntelligence.physicalCardList[artificialIntelligence.physicalCardList.Count].gameObject);
-            artificialIntelligence.physicalCardList.RemoveAt(artificialIntelligence.physicalCardList.Count);
-        }
 
         if (sentIsNotDragging)
         {
@@ -104,12 +112,7 @@ public class BattleManager : MonoBehaviour
             cardDrawCounter++;
         }
 
-        if (cardDrawCounter == 60)
-        {
-            DrawCard(1);
-            DrawCard(2);
-        }
-        else if (cardDrawCounter == 90)
+        if (cardDrawCounter == 90)
         {
             DrawCard(1);
             DrawCard(2);
@@ -119,7 +122,12 @@ public class BattleManager : MonoBehaviour
             DrawCard(1);
             DrawCard(2);
         }
-        else if (cardDrawCounter >= 150)
+        else if (cardDrawCounter == 150)
+        {
+            DrawCard(1);
+            DrawCard(2);
+        }
+        else if (cardDrawCounter >= 210)
         {
             cardDrawCounter = 0;
             cardDrawBool = false;
@@ -159,15 +167,40 @@ public class BattleManager : MonoBehaviour
         player2_MaxEnergy = 0;
         player1_CurrentEnergy = 0;
         player2_CurrentEnergy = 0;
+        gameOver = false;
+        winner = 0;
+        if (gameManager.deck3.Count == 30)
+        {
+            player2_BattleDeck = gameManager.deck3;
+        }
+        player1_CurrentEnergy = 0;
+        player2_CurrentEnergy = 0;
+        Destroy(player1_Trainer);
+        Destroy(player2_Trainer);
+        GamePiece newPlayer1 = Instantiate(player1_TrainerPrefab, GameObject.Find("BattleUI").transform);
+        GamePiece newPlayer2 = Instantiate(player2_TrainerPrefab, GameObject.Find("BattleUI").transform);
+        newPlayer1.name = "Player1Trainer";
+        newPlayer2.name = "Player2Trainer";
+        player1_Trainer = GameObject.Find("Player1Trainer").GetComponent<GamePiece>();
+        player2_Trainer = GameObject.Find("Player2Trainer").GetComponent<GamePiece>();
+        player2_Trainer.transform.SetAsFirstSibling();
+        player1_Trainer.transform.SetAsFirstSibling();
+        player1_Hand.Clear();
+        player2_Hand.Clear();
+        player1_BattleField.Clear();
+        player2_BattleField.Clear();
+        endGameMenu.SetActive(false);
+        winner = 0;
+        quitGame = false;
+        playerTurn = 0;
+        artificialIntelligence.physicalCardList.Clear();
+        endTurnButton.interactable = false;
+        bigAnnouncement.gameObject.SetActive(false);
+        smallAnnouncement.gameObject.SetActive(false);
 
         // Each player draws 5 cards
         cardDrawCounter = 0;
         cardDrawBool = true;
-    }
-
-    public void BattleEnd()
-    {
-
     }
 
     public void ShuffleDeck(List<Card> deck)
@@ -198,29 +231,34 @@ public class BattleManager : MonoBehaviour
     {
         int multiplierAttacker = attacker.currentAttack;
         int multiplierDefender = defender.currentAttack;
-        if (attacker.name != "Player1Trainer" && defender.name != "Player1Trainer" && attacker.name != "Player2Trainer" && defender.name != "Player2Trainer")
-        if (attacker.weakness == defender.type)
+        if (defender.name != "Player1Trainer" && defender.name != "Player2Trainer")
         {
-            multiplierDefender = defender.currentAttack * 2;
-        }
-        else if (attacker.resistance == defender.type)
-        {
-            multiplierDefender = Mathf.RoundToInt(defender.currentAttack / 2);
-        }
-        if (defender.weakness == attacker.type)
-        {
-            multiplierAttacker = attacker.currentAttack * 2;
-        }
-        else if (defender.resistance == attacker.type)
-        {
-            multiplierAttacker = Mathf.RoundToInt(attacker.currentAttack / 2);
+            if (attacker.weakness == defender.type)
+            {
+                multiplierDefender = defender.currentAttack * 2;
+            }
+            else if (attacker.resistance == defender.type)
+            {
+                multiplierDefender = Mathf.RoundToInt(defender.currentAttack / 2);
+            }
+            if (defender.weakness == attacker.type)
+            {
+                multiplierAttacker = attacker.currentAttack * 2;
+            }
+            else if (defender.resistance == attacker.type)
+            {
+                multiplierAttacker = Mathf.RoundToInt(attacker.currentAttack / 2);
+            }
         }
 
         if (attacker.player != defender.player && attacker.canAttack)
         {
             if ((playerTurn == 1 && !attackInProgress) || playerTurn == 2)
             {
-                attacker.HighlightEnemies();
+                if (playerTurn == 1 && !attackInProgress)
+                {
+                    attacker.HighlightEnemies();
+                }
                 attacker.counter = 0;
                 defender.counter = 0;
                 attackInProgress = true;
@@ -236,72 +274,62 @@ public class BattleManager : MonoBehaviour
                 defender.damaged = true;
                 if (defender.name != "Player1Trainer" && defender.name != "Player2Trainer")
                 {
-                    if (attacker.toxic)
+                    if (defender.shielded && attacker.shielded)
                     {
-                        if (defender.shielded)
+                        attacker.damageDisplay.text = "Shield";
+                        defender.damageDisplay.text = "Shield";
+                        defender.shielded = false;
+                        if (defender.attack > 0)
                         {
-                            attacker.currentHealth -= multiplierDefender;
-                            attacker.damageDisplay.text = "-" + multiplierDefender;
-                            defender.shielded = false;
-                        }
-                        else
-                        {
-                            defender.currentHealth -= defender.currentHealth;
-                            defender.damageDisplay.text = "Toxic";
-                            if (defender.toxic)
-                            {
-                                attacker.currentHealth -= attacker.currentHealth;
-                                attacker.damageDisplay.text = "Toxic";
-                            }
-                            else
-                            {
-                                attacker.currentHealth -= multiplierDefender;
-                                attacker.damageDisplay.text = "-" + multiplierDefender;
-                            }
+                            attacker.shielded = false;
                         }
                     }
-                    else if (defender.toxic)
+                    else if (defender.shielded)
                     {
-                        attacker.currentHealth -= attacker.currentHealth;
-                        attacker.damageDisplay.text = "Toxic";
-                        if (attacker.toxic)
+                        attacker.currentHealth -= multiplierAttacker;
+                        attacker.damageDisplay.text = "-" + multiplierDefender;
+                        defender.damageDisplay.text = "Shield";
+                        defender.shielded = false;
+                    }
+                    else if (attacker.shielded)
+                    {
+                        defender.currentHealth -= multiplierAttacker;
+                        attacker.damageDisplay.text = "Shield";
+                        defender.damageDisplay.text = "-" + multiplierAttacker;
+                        if (defender.attack > 0)
                         {
-                            defender.currentHealth -= defender.currentHealth;
-                            defender.damageDisplay.text = "Toxic";
+                            attacker.shielded = false;
                         }
-                        else
-                        {
-                            defender.currentHealth -= multiplierAttacker;
-                            defender.damageDisplay.text = "-" + multiplierAttacker;
-                        }
+                        defender.currentHealth -= multiplierAttacker;
                     }
                     else
                     {
-                        if (attacker.shielded)
+                        if (attacker.toxic && defender.toxic)
                         {
-                            attacker.damageDisplay.text = "Shield";
-                            defender.currentHealth -= multiplierAttacker;
-                            defender.damageDisplay.text = "-" + multiplierAttacker;
-                            if (defender.attack > 0)
-                            {
-                                attacker.shielded = false;
-                            }
+                            attacker.damageDisplay.text = "Toxic";
+                            defender.damageDisplay.text = "Toxic";
+                            attacker.currentHealth -= attacker.currentHealth;
+                            defender.currentHealth -= defender.currentHealth;
                         }
-                        else if (defender.shielded)
+                        else if (attacker.toxic)
                         {
-                            defender.damageDisplay.text = "Shield";
+                            defender.damageDisplay.text = "Toxic";
+                            defender.currentHealth -= defender.currentHealth;
                             attacker.currentHealth -= multiplierDefender;
                             attacker.damageDisplay.text = "-" + multiplierDefender;
-                            if (attacker.attack > 0)
-                            {
-                                defender.shielded = false;
-                            }
+                        }
+                        else if (defender.toxic)
+                        {
+                            attacker.damageDisplay.text = "Toxic";
+                            attacker.currentHealth -= attacker.currentHealth;
+                            defender.currentHealth -= multiplierAttacker;
+                            defender.damageDisplay.text = "-" + multiplierAttacker;
                         }
                         else
                         {
                             attacker.currentHealth -= multiplierDefender;
-                            attacker.damageDisplay.text = "-" + multiplierDefender;
                             defender.currentHealth -= multiplierAttacker;
+                            attacker.damageDisplay.text = "-" + multiplierDefender;
                             defender.damageDisplay.text = "-" + multiplierAttacker;
                         }
                     }
@@ -478,5 +506,52 @@ public class BattleManager : MonoBehaviour
         abilityOverlay.SetActive(false);
         abilityMode = false;
         abilityModeAbility = "";
+    }
+
+    public void QuitButton()
+    {
+        Time.timeScale = 0;
+        quitMenu.SetActive(true);
+    }
+
+    public void QuitNoButton()
+    {
+        Time.timeScale = 1;
+        quitMenu.SetActive(false);
+    }
+
+    public void QuitYesButton()
+    {
+        Time.timeScale = 1;
+        quitMenu.SetActive(false);
+        gameManager.mainMenu.SetActive(true);
+        gameManager.menuPanel.SetActive(true);
+        gameManager.menuPanel.GetComponent<CanvasGroup>().alpha = 1;
+        quitGame = true;
+    }
+
+    public void BattleOver()
+    {
+        endGameMenu.SetActive(true);
+        if (winner == 2)
+        {
+            // You lose!
+            endGameText.text = "You lose!";
+            for (int i = 0; i < player2_BattleField.Count; i++)
+            {
+                GameObject winningPokemon = Instantiate(winningPokemonEntry, winningPokemonList.transform);
+                winningPokemon.GetComponent<WinningPokemonDisplay>().card = player2_BattleField[i].card;
+            }
+        }
+        else if (winner == 1)
+        {
+            // You win!
+            endGameText.text = "You win!";
+            for (int i = 0; i < player1_BattleField.Count; i++)
+            {
+                GameObject winningPokemon = Instantiate(winningPokemonEntry, winningPokemonList.transform);
+                winningPokemon.GetComponent<WinningPokemonDisplay>().card = player1_BattleField[i].card;
+            }
+        }
     }
 }

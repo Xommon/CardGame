@@ -40,11 +40,15 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject protectEffect;
     public GameObject disableEffect;
     public GameObject electricityEffect;
+    public GameObject toxicEffect;
+    public GameObject transformEffect;
     public bool toxic;
     public bool paralysed;
     public bool shielded;
     public bool guarding;
     public bool disabled;
+    public bool transformed;
+    public Card transformOriginalCard;
 
     // Start is called before the first frame update
     void Start()
@@ -77,10 +81,24 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             type = FindObjectOfType<MakeACard>().types[Random.Range(0, FindObjectOfType<MakeACard>().types.Count)];
         }
+        if (ability == "Toxic")
+        {
+            toxic = true;
+        }
+        if (ability == "Transform")
+        {
+            transformEffect.SetActive(true);
+        }
     }
     
     void FixedUpdate()
     {
+        // Destroy self once game has been quit
+        if (battleManager.quitGame)
+        {
+            Destroy(gameObject);
+        }
+
         // Ability effects
         if (paralysed)
         {
@@ -89,6 +107,14 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else
         {
             electricityEffect.SetActive(false);
+        }
+        if (transformed)
+        {
+            transformEffect.SetActive(true);
+        }
+        else
+        {
+            transformEffect.SetActive(false);
         }
         if (shielded)
         {
@@ -106,6 +132,14 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             guardEffect.SetActive(false);
         }
+        if (toxic)
+        {
+            toxicEffect.SetActive(true);
+        }
+        else
+        {
+            toxicEffect.SetActive(false);
+        }
         if (disabled)
         {
             disableEffect.SetActive(true);
@@ -113,6 +147,17 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             toxic = false;
             shielded = false;
             guarding = false;
+            if (transformed)
+            {
+                int damageTransfer = (health - currentHealth);
+                card = transformOriginalCard;
+                health = transformOriginalCard.health;
+                currentHealth = health;
+                attack = transformOriginalCard.attack;
+                currentAttack = attack;
+                currentHealth -= damageTransfer;
+            }
+            transformed = false;
         }
         else
         {
@@ -302,8 +347,6 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 // End the damage effect
                 damageEffect.GetComponent<Animator>().enabled = false;
                 damageEffect.SetActive(false);
-                battleManager.attackInProgress = false;
-                damaged = false;
 
                 // The pokemon has been knocked out if it has 0 or less health
                 if (currentHealth <= 0)
@@ -311,7 +354,8 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                     // Enabled death animation
                     gameObject.GetComponent<Animator>().enabled = true;
                     damaged = true;
-                    if (counter >= 160)
+
+                    if (counter >= 140)
                     {
                         // The Pokemon has been knocked out
                         if (card.ability == "Explosive" && !disabled)
@@ -369,8 +413,25 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         }
 
                         // Destroy object
+                        damaged = false;
+                        battleManager.attackInProgress = false;
+                        if (name == "Player1Trainer")
+                        {
+                            battleManager.winner = 2;
+                            battleManager.BattleOver();
+                        }
+                        else if (name == "Player2Trainer")
+                        {
+                            battleManager.winner = 1;
+                            battleManager.BattleOver();
+                        }
                         Destroy(gameObject);
                     }
+                }
+                else
+                {
+                    damaged = false;
+                    battleManager.attackInProgress = false;
                 }
             }
         }
@@ -384,40 +445,37 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             if (battleManager.abilityModeAbility == "Transform")
             {
                 // Transform into the target
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().transformOriginalCard = card;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().card = gameObject.GetComponent<GamePiece>().card;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().transformed = true;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().attack = gameObject.GetComponent<GamePiece>().attack;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().health = gameObject.GetComponent<GamePiece>().health;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().currentAttack = gameObject.GetComponent<GamePiece>().attack;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().health;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().ability = gameObject.GetComponent<GamePiece>().ability;
             }
-            else if (player == 2)
+            else if (battleManager.abilityModeAbility == "Disable")
             {
-                if (battleManager.abilityModeAbility == "Disable")
-                {
-                    // Disable the target
-                    gameObject.GetComponent<GamePiece>().disabled = true;
-                }
-                else if (battleManager.abilityModeAbility == "Paralyse")
-                {
-                    gameObject.GetComponent<GamePiece>().paralysed = true;
-                }
+                // Disable the target
+                gameObject.GetComponent<GamePiece>().disabled = true;
             }
-            else if (player == 1)
+            else if (battleManager.abilityModeAbility == "Paralyse")
             {
-                if (battleManager.abilityModeAbility == "Heal")
+                gameObject.GetComponent<GamePiece>().paralysed = true;
+            }
+            else if (battleManager.abilityModeAbility == "Heal")
+            {
+                // If the target is damaged, heal it
+                if (gameObject.GetComponent<GamePiece>().currentHealth < gameObject.GetComponent<GamePiece>().card.health)
                 {
-                    // If the target is damaged, heal it
-                    if (gameObject.GetComponent<GamePiece>().currentHealth < gameObject.GetComponent<GamePiece>().card.health)
+                    int healthToHeal = (gameObject.GetComponent<GamePiece>().card.health - gameObject.GetComponent<GamePiece>().currentHealth);
+                    if (healthToHeal <= battleManager.selectedGamePiece.health)
                     {
-                        int healthToHeal = (gameObject.GetComponent<GamePiece>().card.health - gameObject.GetComponent<GamePiece>().currentHealth);
-                        if (healthToHeal <= battleManager.selectedGamePiece.health)
-                        {
-                            gameObject.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().card.health;
-                        }
-                        else
-                        {
-                            gameObject.GetComponent<GamePiece>().currentHealth += battleManager.selectedGamePiece.health;
-                        }
+                        gameObject.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().card.health;
+                    }
+                    else
+                    {
+                        gameObject.GetComponent<GamePiece>().currentHealth += battleManager.selectedGamePiece.health;
                     }
                 }
             }
@@ -475,9 +533,12 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         }
                         else
                         {
-                            battleManager.announcementCounter = 0;
-                            battleManager.smallAnnouncement.gameObject.SetActive(true);
-                            battleManager.smallAnnouncement.text = "You must attack guarding Pokémon first.";
+                            if (eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>().player == 2)
+                            {
+                                battleManager.announcementCounter = 0;
+                                battleManager.smallAnnouncement.gameObject.SetActive(true);
+                                battleManager.smallAnnouncement.text = "You must attack guarding Pokémon first.";
+                            }
                         }
                     }
                 }

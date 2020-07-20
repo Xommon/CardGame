@@ -17,12 +17,14 @@ public class GameManager : MonoBehaviour
     public List<Card> deck1 = new List<Card>();
     public List<Card> deck2 = new List<Card>();
     public List<Card> deck3 = new List<Card>();
+    public List<Card> aiDeck = new List<Card>();
     public List<Card> tempDeck = new List<Card>();
     public Card newCustomCard;
     public int currentDeck;
     public int editingDeck;
 
     // Menus
+    public GameObject menuPanel;
     public GameObject mainMenu;
     public GameObject deckMenu;
     public GameObject createADeckMenu;
@@ -59,6 +61,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Enable panel
+        menuPanel.GetComponent<CanvasGroup>().alpha = 1;
+
         // Select current deck
         currentDeck = 1;
 
@@ -78,6 +83,21 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Fadeout panel
+        if (!mainMenu.activeInHierarchy && !deckMenu.activeInHierarchy && !createADeckMenu.activeInHierarchy && !makeACardMenu.activeInHierarchy)
+        {
+            menuPanel.GetComponent<CanvasGroup>().alpha -= 0.05f;
+        }
+        if (menuPanel.GetComponent<CanvasGroup>().alpha <= 0)
+        {
+            menuPanel.GetComponent<CanvasGroup>().alpha = 0;
+            menuPanel.SetActive(false);
+        }
+        else
+        {
+            menuPanel.SetActive(true);
+        }
+
         // Disable the save button in Create-a-Deck mode until the deck has 30 cards and has a name
         if (createADeckMenu.activeInHierarchy == true)
         {
@@ -485,6 +505,7 @@ public class GameManager : MonoBehaviour
     {
         // Transfer the current deck to the battle manager
         battleManager.player1_BattleDeck.Clear();
+        battleManager.player2_BattleDeck.Clear();
         for (int i = 0; i < 30; i++)
         {
             if (currentDeck == 1)
@@ -499,6 +520,7 @@ public class GameManager : MonoBehaviour
             {
                 battleManager.player1_BattleDeck.Add(deck3[i]);
             }
+            battleManager.player2_BattleDeck.Add(aiDeck[i]);
         }
 
         // Start the battle
