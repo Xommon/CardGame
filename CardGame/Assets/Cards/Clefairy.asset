@@ -20,8 +20,8 @@ MonoBehaviour:
   sprite: {fileID: 5162200790339594893, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 4321392627789292589, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
-  attack: 1
+  attack: 2
   health: 2
-  energy: 1
+  energy: 2
   ability: 
   legendary: 0

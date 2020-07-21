@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
+  m_Name: Torchic
+  m_EditorClassIdentifier: 
+  type: Fire
+  weaknessType: 
+  resistanceType: 
+  cry: {fileID: 0}
+  dexNumber: 255
+  sprite: {fileID: 3104720479778806995, guid: 85d82eb46d40f6749a2d6e8fdf2f326a, type: 3}
+  background: {fileID: 8629430854024783748, guid: 7189db2886652d0489ae218c16fb2b10,
+    type: 3}
+  attack: 2
+  health: 2
+  energy: 1
+  ability: 
+  legendary: 0

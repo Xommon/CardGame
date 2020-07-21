@@ -190,9 +190,13 @@ public class GameManager : MonoBehaviour
         createADeckScrollArea.GetComponent<RectTransform>().sizeDelta = new Vector2(-200, allCards.Count * 60f);
 
         // DEBUG
-        if (Input.GetKeyDown("m"))
+        if (Input.GetKeyDown("z"))
         {
             EnergyCostTally(tempDeck);
+        }
+        if (Input.GetKeyDown("x"))
+        {
+            AllCardTypeTally();
         }
     }
 
@@ -526,7 +530,15 @@ public class GameManager : MonoBehaviour
             {
                 battleManager.player1_BattleDeck.Add(deck3[i]);
             }
-            battleManager.player2_BattleDeck.Add(aiDeck[i]);
+
+            if (deck3.Count == 30)
+            {
+                battleManager.player2_BattleDeck.Add(deck3[i]);
+            }
+            else
+            {
+                battleManager.player2_BattleDeck.Add(aiDeck[i]);
+            }
         }
 
         // Start the battle

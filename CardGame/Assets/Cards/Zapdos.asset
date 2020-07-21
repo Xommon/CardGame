@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 7
   health: 7
   energy: 9
-  ability: Paralyse
+  ability: Stormy
   legendary: 1

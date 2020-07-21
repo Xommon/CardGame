@@ -51,6 +51,18 @@ public class PokemonEntry : MonoBehaviour, IPointerEnterHandler
 
     private void Update()
     {
+        // Change colour
+        if (currentQuantity == 0)
+        {
+            thisEntryName.GetComponent<TextMeshProUGUI>().color = new Color32(162, 144, 114, 255);
+            thisEntryCount.GetComponent<TextMeshProUGUI>().color = new Color32(162, 144, 114, 255);
+        }
+        else
+        {
+            thisEntryName.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+            thisEntryCount.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+        }
+
         // Assign values to the text fields
         thisEntryName.GetComponent<TextMeshProUGUI>().text = name;
         thisEntryCount.GetComponent<TextMeshProUGUI>().text = currentQuantity + "/" + maxQuantity;

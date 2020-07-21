@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75183da05ac7e814ebf51cf9ca4cd570, type: 3}
   m_Name: Bellossom
   m_EditorClassIdentifier: 
-  type: Grass
+  type: Sound
   weaknessType: 
   resistanceType: 
   cry: {fileID: 0}

@@ -65,6 +65,11 @@ public class BattleManager : MonoBehaviour
     public bool gameOver;
     public int winner;
     public bool quitGame;
+    public enum Weather { Clear, Sunny, Rainy, Snowy, Sandstorm, Stormy, Windy, Cloudy, MeteorShower }
+    public Weather weather;
+    public GameObject weatherDisplay;
+    public List<Sprite> weatherSprites;
+    public List<GamePiece> weatherPokemon;
 
     // Start is called before the first frame update
     void Start()
@@ -143,7 +148,7 @@ public class BattleManager : MonoBehaviour
         }
 
         // Enable/Disable conversion buttons
-        if (conversionIndex == 17)
+        if (conversionIndex == (FindObjectOfType<MakeACard>().types.Count - 1))
         {
             conversionPlus.interactable = false;
         }
@@ -158,6 +163,108 @@ public class BattleManager : MonoBehaviour
         else
         {
             conversionMinus.interactable = true;
+        }
+
+        // Weather
+        for (int i = 0; i < weatherPokemon.Count; i++)
+        {
+            if (weatherPokemon[weatherPokemon.Count - 1] == null || weatherPokemon[weatherPokemon.Count - 1].disabled)
+            {
+                weatherPokemon.RemoveAt(weatherPokemon.Count - 1);
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (weatherPokemon.Count > 0)
+        {
+            if (weatherPokemon[0].ability == "Air Lock")
+            {
+                weather = Weather.Clear;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Drought")
+            {
+                weather = Weather.Sunny;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Flood")
+            {
+                weather = Weather.Rainy;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Blizzard")
+            {
+                weather = Weather.Snowy;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Sand Stream")
+            {
+                weather = Weather.Sandstorm;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Stormy")
+            {
+                weather = Weather.Stormy;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Whirlwind")
+            {
+                weather = Weather.Windy;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Overcast")
+            {
+                weather = Weather.Cloudy;
+            }
+            else if (weatherPokemon[(weatherPokemon.Count - 1)].ability == "Meteor Shower")
+            {
+                weather = Weather.MeteorShower;
+            }
+        }
+        else
+        {
+            weather = Weather.Clear;
+        }
+
+        if (weather == Weather.Clear)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[0];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Clear";
+        }
+        else if (weather == Weather.Sunny)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[1];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Sunny";
+        }
+        else if (weather == Weather.Rainy)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[2];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Rainy";
+        }
+        else if (weather == Weather.Snowy)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[3];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Snowy";
+        }
+        else if (weather == Weather.Sandstorm)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[4];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Sandstorm";
+        }
+        else if (weather == Weather.Stormy)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[5];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Stormy";
+        }
+        else if (weather == Weather.Windy)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[6];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Windy";
+        }
+        else if (weather == Weather.Cloudy)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[7];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Cloudy";
+        }
+        else if (weather == Weather.MeteorShower)
+        {
+            weatherDisplay.GetComponent<Image>().sprite = weatherSprites[8];
+            weatherDisplay.GetComponentInChildren<TextMeshProUGUI>().text = "Meteor\nShower";
         }
     }
 
@@ -202,6 +309,7 @@ public class BattleManager : MonoBehaviour
         endTurnButton.interactable = false;
         bigAnnouncement.gameObject.SetActive(false);
         smallAnnouncement.gameObject.SetActive(false);
+        weather = Weather.Clear;
 
         // Each player draws 5 cards
         cardDrawCounter = 0;
@@ -279,7 +387,65 @@ public class BattleManager : MonoBehaviour
                 defender.damaged = true;
                 if (defender.name != "Player1Trainer" && defender.name != "Player2Trainer")
                 {
-                    if (defender.shielded && attacker.shielded)
+                    // Attacker
+                    if (attacker.wonderGuarded && (attacker.weakness != defender.type))
+                    {
+                        attacker.damageDisplay.text = "Wonder\nGuard";
+                    }
+                    else if (attacker.shielded)
+                    {
+                        attacker.damageDisplay.text = "Protect";
+                        if (defender.attack > 0)
+                        {
+                            attacker.shielded = false;
+                        }
+                    }
+                    else if (defender.toxic)
+                    {
+                        attacker.damageDisplay.text = "Toxic";
+                        attacker.currentHealth = 0;
+                    }
+                    else
+                    {
+                        attacker.damageDisplay.text = "-" + multiplierDefender;
+                        attacker.currentHealth -= multiplierDefender;
+                    }
+
+                    // Defender
+                    if (defender.wonderGuarded && (defender.weakness != attacker.type))
+                    {
+                        defender.damageDisplay.text = "Wonder\nGuard";
+                    }
+                    else if (defender.shielded)
+                    {
+                        defender.damageDisplay.text = "Protect";
+                        if (attacker.attack > 0)
+                        {
+                            defender.shielded = false;
+                        }
+                    }
+                    else if (attacker.toxic)
+                    {
+                        defender.damageDisplay.text = "Toxic";
+                        defender.currentHealth = 0;
+                    }
+                    else
+                    {
+                        defender.damageDisplay.text = "-" + multiplierAttacker;
+                        defender.currentHealth -= multiplierAttacker;
+                    }
+                }
+                else
+                {
+                    attacker.currentHealth -= multiplierDefender;
+                    attacker.damageDisplay.text = "-" + multiplierDefender;
+                    defender.currentHealth -= multiplierAttacker;
+                    defender.damageDisplay.text = "-" + multiplierAttacker;
+                }
+                    
+
+
+                    /*if (defender.shielded && attacker.shielded)
                     {
                         attacker.damageDisplay.text = "Shield";
                         defender.damageDisplay.text = "Shield";
@@ -345,7 +511,7 @@ public class BattleManager : MonoBehaviour
                     attacker.damageDisplay.text = "-" + multiplierDefender;
                     defender.currentHealth -= multiplierAttacker;
                     defender.damageDisplay.text = "-" + multiplierAttacker;
-                }
+                }*/
             }
         }
     }

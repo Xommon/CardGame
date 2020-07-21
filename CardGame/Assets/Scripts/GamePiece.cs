@@ -14,6 +14,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public int currentEnergy;
     public int attack;
     public int currentAttack;
+    public int weatherAttackBoost;
     public TextMeshProUGUI attackDisplay;
     public int health;
     public int currentHealth;
@@ -34,6 +35,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool targetable;
     public string weakness;
     public string resistance;
+    public List<Sprite> forms;
 
     // Abilities
     public GameObject guardEffect;
@@ -42,6 +44,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject electricityEffect;
     public GameObject toxicEffect;
     public GameObject transformEffect;
+    public GameObject wonderGuardEffect;
     public bool toxic;
     public bool paralysed;
     public bool shielded;
@@ -49,6 +52,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool disabled;
     public bool transformed;
     public Card transformOriginalCard;
+    public bool wonderGuarded;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +68,11 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         currentAttack = attack;
         currentHealth = health;
         ability = card.ability;
+        type = card.type;
+        PokemonImage.sprite = card.sprite;
+        PokemonImageShadow.sprite = card.sprite;
+        
+        // Abilities
         if (ability == "Quick")
         {
             canAttack = true;
@@ -88,6 +97,26 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (ability == "Transform")
         {
             transformEffect.SetActive(true);
+        }
+        if (ability == "Delay")
+        {
+            paralysed = true;
+        }
+        if (ability == "Protect")
+        {
+            shielded = true;
+        }
+        if (ability == "Draw Card")
+        {
+            battleManager.DrawCard(player);
+        }
+        if (ability == "AirLock" || ability == "Drought" || ability == "Flood" || ability == "Blizzard" || ability == "Sand Stream" || ability == "Stormy" || ability == "Whirlwind" || ability == "Overcast" || ability == "Meteor Shower")
+        {
+            battleManager.weatherPokemon.Add(this);
+        }
+        if (ability == "Wonder Guard")
+        {
+            wonderGuarded = true;
         }
     }
     
@@ -147,6 +176,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             toxic = false;
             shielded = false;
             guarding = false;
+            wonderGuarded = false;
             if (transformed)
             {
                 int damageTransfer = (health - currentHealth);
@@ -156,12 +186,21 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 attack = transformOriginalCard.attack;
                 currentAttack = attack;
                 currentHealth -= damageTransfer;
+                PokemonImage.sprite = transformOriginalCard.sprite;
             }
             transformed = false;
         }
         else
         {
             disableEffect.SetActive(false);
+        }
+        if (wonderGuarded)
+        {
+            wonderGuardEffect.SetActive(true);
+        }
+        else
+        {
+            wonderGuardEffect.SetActive(false);
         }
 
         // Pokemon with 0 attack can never attack
@@ -171,9 +210,8 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
 
         // Set variables
-        PokemonImage.sprite = card.sprite;
-        PokemonImageShadow.sprite = card.sprite;
-        if (ability != "Convert")
+        PokemonImageShadow.sprite = PokemonImage.sprite;
+        if (ability != "Convert" && ability != "Forecast")
         {
             type = card.type;
         }
@@ -186,7 +224,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else if (type == "Dark")
         {
             backgroundImage.GetComponent<Image>().color = new Color32(25, 25, 25, 255);
-            weakness = "Bug";
+            weakness = "Sound";
             resistance = "Psychic";
         }
         else if (type == "Dragon")
@@ -285,10 +323,99 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             weakness = "Electric";
             resistance = "";
         }
-        /*else if (type == "Sound")
+        else if (type == "Sound")
         {
-            backgroundImage.GetComponent<Image>().color = new Color32(28, 31, 120, 255);
-        }*/
+            backgroundImage.GetComponent<Image>().color = new Color32(255, 137, 0, 255);
+            weakness = "Rock";
+            resistance = "Sound";
+        }
+
+        // Weather effects
+        if (battleManager.weather == BattleManager.Weather.Sunny && type == "Fire")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Rainy && type == "Water")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Snowy && type == "Ice")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Sandstorm && (type == "Ground" || type == "Rock"))
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Stormy && type == "Electric")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Windy && type == "Flying")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.Cloudy && type == "Dark")
+        {
+            weatherAttackBoost = 2;
+        }
+        else if (battleManager.weather == BattleManager.Weather.MeteorShower && type == "Steel")
+        {
+            weatherAttackBoost = 2;
+        }
+        else
+        {
+            weatherAttackBoost = 0;
+        }
+
+        if (ability == "Forecast")
+        {
+            if (battleManager.weather == BattleManager.Weather.Clear)
+            {
+                type = "Normal";
+                PokemonImage.sprite = forms[0];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Sunny)
+            {
+                type = "Fire";
+                PokemonImage.sprite = forms[1];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Rainy)
+            {
+                type = "Water";
+                PokemonImage.sprite = forms[2];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Snowy)
+            {
+                type = "Ice";
+                PokemonImage.sprite = forms[3];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Sandstorm)
+            {
+                type = "Ground";
+                PokemonImage.sprite = forms[4];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Stormy)
+            {
+                type = "Electric";
+                PokemonImage.sprite = forms[5];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Windy)
+            {
+                type = "Flying";
+                PokemonImage.sprite = forms[6];
+            }
+            else if (battleManager.weather == BattleManager.Weather.Cloudy)
+            {
+                type = "Dark";
+                PokemonImage.sprite = forms[7];
+            }
+            else if (battleManager.weather == BattleManager.Weather.MeteorShower)
+            {
+                type = "Steel";
+                PokemonImage.sprite = forms[7];
+            }
+        }
 
         // Update stats on card
         attackDisplay.text = currentAttack.ToString();
@@ -333,6 +460,9 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             gameObject.GetComponent<Image>().color = new Color32(0, 255, 0, 150);
         }
 
+        // Take in account for weather changes
+        currentAttack = attack + weatherAttackBoost;
+
         // Count for a delay after being damaged
         if (damaged)
         {
@@ -347,6 +477,25 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 // End the damage effect
                 damageEffect.GetComponent<Animator>().enabled = false;
                 damageEffect.SetActive(false);
+
+                // Run away ability
+                if (ability == "Run Away")
+                {
+                    if (player == 1)
+                    {
+                        Instantiate(card, battleManager.player1_HandObject.transform);
+                        battleManager.player1_BattleField.Remove(this);
+                        battleManager.player1_Hand.Add(card);
+                    }
+                    else if (player == 2)
+                    {
+                        Instantiate(card, battleManager.player2_HandObject.transform);
+                        battleManager.player2_BattleField.Remove(this);
+                        battleManager.player2_Hand.Add(card);
+                    }
+
+                    Destroy(gameObject);
+                }
 
                 // The pokemon has been knocked out if it has 0 or less health
                 if (currentHealth <= 0)
@@ -452,7 +601,8 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().health = gameObject.GetComponent<GamePiece>().health;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().currentAttack = gameObject.GetComponent<GamePiece>().attack;
                 battleManager.selectedGamePiece.GetComponent<GamePiece>().currentHealth = gameObject.GetComponent<GamePiece>().health;
-                battleManager.selectedGamePiece.GetComponent<GamePiece>().ability = gameObject.GetComponent<GamePiece>().ability;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().ability = card.ability;
+                battleManager.selectedGamePiece.GetComponent<GamePiece>().PokemonImage.sprite = gameObject.GetComponent<GamePiece>().PokemonImage.sprite;
             }
             else if (battleManager.abilityModeAbility == "Disable")
             {

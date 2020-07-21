@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 8
   health: 9
   energy: 9
-  ability: 
+  ability: Flood
   legendary: 1

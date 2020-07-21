@@ -221,7 +221,7 @@ public class ArtificialIntelligence : MonoBehaviour
 
             // Begin attacking
             // Have all Pokemon attack the player if their field is empty
-            Debug.Log("AI: ''Attacking the trainer!''");
+            Debug.Log("AI: ''I'm attacking now!''");
             if (battleManager.player1_BattleField.Count == 0)
             {
                 battleManager.Attack(possibleAttacks[0], battleManager.player1_Trainer);
@@ -233,46 +233,144 @@ public class ArtificialIntelligence : MonoBehaviour
                 // There are Pokemon in the way
                 GamePiece defender = null;
                 GamePiece attacker = battleManager.player2_BattleField[Random.Range(0, battleManager.player2_BattleField.Count)];
-                for (int i = 0; i < possibleTargets.Count; i++)
+
+                // Check for wonder guard
+                bool pokemonIsWonderGuarding = false;
+                for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
                 {
-                    if (defender == null)
+                    if (battleManager.player1_BattleField[i].wonderGuarded)
                     {
-                        if (attacker.currentAttack >= possibleTargets[i].currentHealth)
-                        if (attacker.currentAttack >= possibleTargets[i].currentHealth)
-                        {
-                            defender = possibleTargets[i];
-                        }
-                    }
-                    else
-                    {
-                        if (attacker.currentAttack >= possibleTargets[i].currentHealth && defender.currentAttack > possibleTargets[i].currentAttack)
-                        {
-                            defender = possibleTargets[i];
-                        }
+                        pokemonIsWonderGuarding = true;
+                        break;
                     }
                 }
 
-                if (defender == null)
+                // Make sure there's a dark type Pokemon to counter it
+                bool darkPokemonExists = false;
+                for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
                 {
-                    for (int i = 0; i < possibleTargets.Count; i++)
+                    if (battleManager.player2_BattleField[i].type == "Dark")
                     {
-                        if (defender == null)
+                        darkPokemonExists = true;
+                        break;
+                    }
+                }
+
+                if (pokemonIsWonderGuarding && darkPokemonExists)
+                {
+                    // Create a list of wonder guarded Pokemon
+                    List<GamePiece> wonderGuardedPokemon = new List<GamePiece>();
+                    for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                    {
+                        if (battleManager.player1_BattleField[i].wonderGuarded)
                         {
-                            defender = possibleTargets[i];
+                            wonderGuardedPokemon.Add(battleManager.player1_BattleField[i]);
+                        }
+                    }
+
+                    // Create a list of dark type Pokemon
+                    List<GamePiece> darkPokemon = new List<GamePiece>();
+                    for (int i = 0; i < battleManager.player2_BattleField.Count; i++)
+                    {
+                        if (possibleAttacks[i].type == "Dark")
+                        {
+                            darkPokemon.Add(possibleAttacks[i]);
+                        }
+                    }
+
+                    // Find strongest dark type Pokemon
+                    GamePiece strongestDarkPokemon = null;
+                    for (int i = 0; i < darkPokemon.Count; i++)
+                    {
+                        if (strongestDarkPokemon == null)
+                        {
+                            strongestDarkPokemon = darkPokemon[i];
                         }
                         else
                         {
-                            if (defender.currentHealth > possibleTargets[i].currentHealth)
+                            if (darkPokemon[i].currentHealth > strongestDarkPokemon.currentHealth)
                             {
-                                defender = possibleTargets[i];
+                                strongestDarkPokemon = darkPokemon[i];
+                            }
+                            else if (darkPokemon[i].currentHealth == strongestDarkPokemon.currentHealth)
+                            {
+                                if (Random.Range(0, 2) == 1)
+                                {
+                                    strongestDarkPokemon = darkPokemon[i];
+                                }
                             }
                         }
                     }
-                }
 
-                battleManager.Attack(attacker, defender);
-                thinkCounter = 100;
-                phase = Phase.ReadyToAttack;
+                    // Knock out the wonder guarded Pokemon!
+                    battleManager.Attack(strongestDarkPokemon, wonderGuardedPokemon[Random.Range(0, wonderGuardedPokemon.Count)]);
+                    thinkCounter = 100;
+                    phase = Phase.ReadyToAttack;
+                }
+                else
+                {
+                    // Remove wonder guarded Pokemon since they can't be attacked
+                    int targetsRemoved = 0;
+                    for (int i = 0; i < possibleTargets.Count; i++)
+                    {
+                        if (possibleTargets[i - targetsRemoved].wonderGuarded)
+                        {
+                            targetsRemoved++;
+                            possibleTargets.RemoveAt(i - targetsRemoved);
+                        }
+                    }
+
+                    if (possibleTargets.Count > 0)
+                    {
+                        for (int i = 0; i < possibleTargets.Count; i++)
+                        {
+                            if (defender == null)
+                            {
+                                if (attacker.currentAttack >= possibleTargets[i].currentHealth)
+                                    if (attacker.currentAttack >= possibleTargets[i].currentHealth)
+                                    {
+                                        defender = possibleTargets[i];
+                                    }
+                            }
+                            else
+                            {
+                                if (attacker.currentAttack >= possibleTargets[i].currentHealth && defender.currentAttack > possibleTargets[i].currentAttack)
+                                {
+                                    defender = possibleTargets[i];
+                                }
+                            }
+                        }
+
+                        if (defender == null)
+                        {
+                            for (int i = 0; i < possibleTargets.Count; i++)
+                            {
+                                if (defender == null)
+                                {
+                                    defender = possibleTargets[i];
+                                }
+                                else
+                                {
+                                    if (defender.currentHealth > possibleTargets[i].currentHealth)
+                                    {
+                                        defender = possibleTargets[i];
+                                    }
+                                }
+                            }
+                        }
+
+                        battleManager.Attack(attacker, defender);
+                        thinkCounter = 100;
+                        phase = Phase.ReadyToAttack;
+                    }
+                    else
+                    {
+                        // Thwarted by wonder guard
+                        Debug.Log("AI: 'The only Pokemon I can attack have wonder guard, and I don't have any dark types.'");
+                        thinkCounter = 100;
+                        endingTurn = true;
+                    }
+                }
             }
         }
         else
@@ -370,11 +468,34 @@ public class ArtificialIntelligence : MonoBehaviour
         else if (card.ability == "Disable")
         {
             List<GamePiece> canDisable = new List<GamePiece>();
+            bool pokemonIsWonderGuarding = false;
             for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
             {
-                if (battleManager.player1_BattleField[i].ability == "Toxic" || battleManager.player1_BattleField[i].ability == "Guard" || battleManager.player1_BattleField[i].ability == "Transform" || battleManager.player1_BattleField[i].ability == "Protect" || battleManager.player1_BattleField[i].ability == "Convert" || battleManager.player1_BattleField[i].ability == "Explosive")
+                if (battleManager.player1_BattleField[i].ability == "Wonder Guard")
                 {
-                    canDisable.Add(battleManager.player1_BattleField[i]);
+                    pokemonIsWonderGuarding = true;
+                    break;
+                }
+            }
+
+            if (pokemonIsWonderGuarding)
+            {
+                for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                {
+                    if (battleManager.player1_BattleField[i].ability == "Wonder Guard")
+                    {
+                        canDisable.Add(battleManager.player1_BattleField[i]);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < battleManager.player1_BattleField.Count; i++)
+                {
+                    if (battleManager.player1_BattleField[i].ability == "Meteor Shower" || battleManager.player1_BattleField[i].ability == "Stormy" || battleManager.player1_BattleField[i].ability == "Whirlwind" || battleManager.player1_BattleField[i].ability == "Blizzard" || battleManager.player1_BattleField[i].ability == "Flood" || battleManager.player1_BattleField[i].ability == "Drought" || battleManager.player1_BattleField[i].ability == "Sand Stream" || battleManager.player1_BattleField[i].ability == "Toxic" || battleManager.player1_BattleField[i].ability == "Guard" || battleManager.player1_BattleField[i].ability == "Transform" || battleManager.player1_BattleField[i].ability == "Protect" || battleManager.player1_BattleField[i].ability == "Convert" || battleManager.player1_BattleField[i].ability == "Explosive")
+                    {
+                        canDisable.Add(battleManager.player1_BattleField[i]);
+                    }
                 }
             }
 

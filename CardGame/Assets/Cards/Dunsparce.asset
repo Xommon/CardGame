@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 1
   health: 4
   energy: 2
-  ability: 
+  ability: Run Away
   legendary: 0

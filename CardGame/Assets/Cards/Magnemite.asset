@@ -21,7 +21,7 @@ MonoBehaviour:
   background: {fileID: 4321392627789292589, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 2
-  health: 4
+  health: 3
   energy: 3
-  ability: 
+  ability: Paralyse
   legendary: 0

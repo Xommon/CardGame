@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 3
   health: 3
   energy: 3
-  ability: Guard
+  ability: Draw Card
   legendary: 0

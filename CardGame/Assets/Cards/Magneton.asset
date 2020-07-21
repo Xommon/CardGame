@@ -22,6 +22,6 @@ MonoBehaviour:
     type: 3}
   attack: 4
   health: 7
-  energy: 5
-  ability: 
+  energy: 6
+  ability: Explosive
   legendary: 0

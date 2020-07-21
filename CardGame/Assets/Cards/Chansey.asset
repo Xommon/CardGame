@@ -21,7 +21,7 @@ MonoBehaviour:
   background: {fileID: 8629430854024783748, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
   attack: 1
-  health: 9
-  energy: 4
+  health: 6
+  energy: 3
   ability: Heal
   legendary: 0

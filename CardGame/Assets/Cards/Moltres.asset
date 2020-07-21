@@ -20,8 +20,8 @@ MonoBehaviour:
   sprite: {fileID: -4598437942740532356, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: -1501767965027580945, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
-  attack: 8
+  attack: 7
   health: 7
   energy: 9
-  ability: Quick
+  ability: Drought
   legendary: 1

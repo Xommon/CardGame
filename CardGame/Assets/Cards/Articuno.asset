@@ -20,8 +20,8 @@ MonoBehaviour:
   sprite: {fileID: 2688983395813173749, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 1777830377951763411, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
-  attack: 8
+  attack: 7
   health: 7
   energy: 9
-  ability: Guard
+  ability: Blizzard
   legendary: 1

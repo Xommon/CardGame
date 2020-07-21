@@ -23,5 +23,5 @@ MonoBehaviour:
   attack: 2
   health: 3
   energy: 3
-  ability: Quick
+  ability: Draw Card
   legendary: 0

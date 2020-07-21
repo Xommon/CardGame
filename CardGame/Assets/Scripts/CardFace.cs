@@ -146,10 +146,10 @@ public class CardFace : MonoBehaviour
             weaknessType = "Electric";
             resistanceType = "";
         }
-        /*else if (card.type == "Sound")
+        else if (card.type == "Sound")
         {
             weaknessType = "Rock";
             resistanceType = "Sound";
-        }*/
+        }
     }
 }

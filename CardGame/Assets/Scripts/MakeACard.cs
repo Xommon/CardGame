@@ -78,6 +78,7 @@ public class MakeACard : MonoBehaviour
         types.Add("Poison");
         types.Add("Psychic");
         types.Add("Rock");
+        types.Add("Sound");
         types.Add("Steel");
         types.Add("Water");
 
@@ -93,6 +94,21 @@ public class MakeACard : MonoBehaviour
         abilities.Add("Heal");
         abilities.Add("Transform");
         abilities.Add("Convert");
+        abilities.Add("Delay");
+        //abilities.Add("Forecast");
+        abilities.Add("Drought");
+        abilities.Add("Flood");
+        abilities.Add("Sand Stream");
+        abilities.Add("Blizzard");
+        abilities.Add("Air Lock");
+        abilities.Add("Overcast");
+        abilities.Add("Stormy");
+        abilities.Add("Whirlwind");
+        //abilities.Add("Morph");
+        //abilities.Add("Wonder Guard");
+        abilities.Add("Draw Card");
+        abilities.Add("Meteor Shower");
+        abilities.Add("Run Away");
 
         // Abilities Descriptions
         abilitiesDescriptions.Add("");
@@ -106,8 +122,23 @@ public class MakeACard : MonoBehaviour
         abilitiesDescriptions.Add("When played, choose a friendly Pokémon to heal equal to this Pokémon's health.");
         abilitiesDescriptions.Add("When played, choose any Pokémon to turn into.");
         abilitiesDescriptions.Add("When played, choose any type to turn into.");
+        abilitiesDescriptions.Add("This Pokémon cannot attack for two turns once played.");
+        //abilitiesDescriptions.Add("Forecast");
+        abilitiesDescriptions.Add("The weather is always sunny while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always rainy while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always sandstorm while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always snowy while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always clear while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always cloudy while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always stormy while this Pokémon is in play.");
+        abilitiesDescriptions.Add("The weather is always windy while this Pokémon is in play.");
+        //abilitiesDescriptions.Add("Morph");
+        //abilitiesDescriptions.Add("This Pokémon can only be damaged by its weakness type.");
+        abilitiesDescriptions.Add("When played, draw a card.");
+        abilitiesDescriptions.Add("The weather is always meteor shower while this Pokémon is in play.");
+        abilitiesDescriptions.Add("When this Pokémon has 1 health remaining, it is returned to the player's hand.");
     }
-    
+
     void Update()
     {
         // Disable save button if there's too many cards made or the user didn't give the card a name
@@ -189,7 +220,7 @@ public class MakeACard : MonoBehaviour
         {
             Type_Minus.interactable = false;
         }
-        else if (type == 17)
+        else if (type == (types.Count - 1))
         {
             Type_Plus.interactable = false;
         }
@@ -204,7 +235,7 @@ public class MakeACard : MonoBehaviour
         {
             Ability_Minus.interactable = false;
         }
-        else if (ability == 10)
+        else if (ability == (abilities.Count - 1))
         {
             Ability_Plus.interactable = false;
         }
@@ -413,7 +444,7 @@ public class MakeACard : MonoBehaviour
         }
         else if (type == 1)
         {
-            weaknessType = "Bug";
+            weaknessType = "Sound";
             resistanceType = "Psychic";
         }
         else if (type == 2)
@@ -488,19 +519,19 @@ public class MakeACard : MonoBehaviour
         }
         else if (type == 16)
         {
+            weaknessType = "Rock";
+            resistanceType = "Sound";
+        }
+        else if (type == 17)
+        {
             weaknessType = "Ground";
             resistanceType = "Poison";
         }
-        else if (type == 17)
+        else if (type == 18)
         {
             weaknessType = "Electric";
             resistanceType = "";
         }
-        /*else if (type == 18)
-        {
-            weaknessType = "Rock";
-            resistanceType = "Sound";
-        }*/
     }
 
     public void SetDefaultVariables()
