@@ -20,8 +20,8 @@ MonoBehaviour:
   sprite: {fileID: -7115814843769481532, guid: 1eb585d8e90865646b4beb66c1d3c675, type: 3}
   background: {fileID: 1070907450912709122, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
-  attack: 6
-  health: 6
+  attack: 5
+  health: 5
   energy: 6
   ability: Guard
   legendary: 0
