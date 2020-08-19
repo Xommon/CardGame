@@ -13,6 +13,7 @@ public class ArtificialIntelligence : MonoBehaviour
     public List<GamePiece> possibleTargets;
     public List<GameObject> physicalCardList;
     public GamePiece gamePiece;
+    public DamageSystem damageSystem;
     public enum Phase { Waiting, PlayingCards, Attacking, ReadyToAttack };
     public Phase phase;
     public bool endingTurn;
@@ -21,6 +22,7 @@ public class ArtificialIntelligence : MonoBehaviour
 
     void Start()
     {
+        damageSystem = GetComponent<DamageSystem>();
         phase = Phase.Waiting;
         possiblePlays = new List<Card>();
     }
@@ -34,7 +36,7 @@ public class ArtificialIntelligence : MonoBehaviour
                 thinkCounter++;
 
                 // Time for the AI to start playing
-                if (thinkCounter >= 225)
+                if (thinkCounter >= 250)
                 {
                     if (phase == Phase.Waiting)
                     {
@@ -224,7 +226,7 @@ public class ArtificialIntelligence : MonoBehaviour
             Debug.Log("AI: ''I'm attacking now!''");
             if (battleManager.player1_BattleField.Count == 0)
             {
-                battleManager.Attack(possibleAttacks[0], battleManager.player1_Trainer);
+                damageSystem.Attack(possibleAttacks[0], battleManager.player1_Trainer);
                 thinkCounter = 100;
                 phase = Phase.ReadyToAttack;
             }
@@ -303,7 +305,7 @@ public class ArtificialIntelligence : MonoBehaviour
                     }
 
                     // Knock out the wonder guarded Pokemon!
-                    battleManager.Attack(strongestDarkPokemon, wonderGuardedPokemon[Random.Range(0, wonderGuardedPokemon.Count)]);
+                    damageSystem.Attack(strongestDarkPokemon, wonderGuardedPokemon[Random.Range(0, wonderGuardedPokemon.Count)]);
                     thinkCounter = 100;
                     phase = Phase.ReadyToAttack;
                 }
@@ -359,7 +361,7 @@ public class ArtificialIntelligence : MonoBehaviour
                             }
                         }
 
-                        battleManager.Attack(attacker, defender);
+                        damageSystem.Attack(attacker, defender);
                         thinkCounter = 100;
                         phase = Phase.ReadyToAttack;
                     }

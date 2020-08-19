@@ -3,24 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class DropZone : MonoBehaviour, IDropHandler
 {
     public GameObject gamePiece;
     public BattleManager battleManager;
+    public AnnouncementEvents announcementEvents;
 
     void Start()
     {
         battleManager = FindObjectOfType<BattleManager>();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-
+        announcementEvents = FindObjectOfType<AnnouncementEvents>();
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -33,21 +25,21 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             // Convert the player's card into a game piece if there's enough room on the field, if the player has the energy to play the card, and it's the player's turn
             if (battleManager.playerTurn != 1)
             {
-                battleManager.announcementCounter = 0;
-                battleManager.smallAnnouncement.gameObject.SetActive(true);
-                battleManager.smallAnnouncement.text = "It is not your turn.";
+                announcementEvents.announcementCounter = 0;
+                announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                announcementEvents.smallAnnouncement.text = "It is not your turn.";
             }
             else if (battleManager.player1_CurrentEnergy < eventData.pointerDrag.GetComponent<CardFace>().card.energy)
             {
-                battleManager.announcementCounter = 0;
-                battleManager.smallAnnouncement.gameObject.SetActive(true);
-                battleManager.smallAnnouncement.text = "You don't have enough energy to play this card.";
+                announcementEvents.announcementCounter = 0;
+                announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                announcementEvents.smallAnnouncement.text = "You don't have enough energy to play this card.";
             }
             else if (battleManager.player1_BattleField.Count == 6)
             {
-                battleManager.announcementCounter = 0;
-                battleManager.smallAnnouncement.gameObject.SetActive(true);
-                battleManager.smallAnnouncement.text = "You can only have 6 Pokémon on your side of the field at a time.";
+                announcementEvents.announcementCounter = 0;
+                announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                announcementEvents.smallAnnouncement.text = "You can only have 6 Pokémon on your side of the field at a time.";
             }
             else
             {
@@ -92,9 +84,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     // Heal a Pokemon
                     battleManager.selectedGamePiece = newGamePiece.GetComponent<GamePiece>();
                     battleManager.abilityOverlay2.SetActive(true);
-                    battleManager.announcementCounter = 0;
-                    battleManager.smallAnnouncement.gameObject.SetActive(true);
-                    battleManager.smallAnnouncement.text = "Choose a Pokémon to heal.";
+                    announcementEvents.announcementCounter = 0;
+                    announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                    announcementEvents.smallAnnouncement.text = "Choose a Pokémon to heal.";
                     battleManager.abilityMode = true;
                     battleManager.abilityModeAbility = "Heal";
                 }
@@ -103,9 +95,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     // Disable a Pokemon
                     battleManager.selectedGamePiece = newGamePiece.GetComponent<GamePiece>();
                     battleManager.abilityOverlay.SetActive(true);
-                    battleManager.announcementCounter = 0;
-                    battleManager.smallAnnouncement.gameObject.SetActive(true);
-                    battleManager.smallAnnouncement.text = "Choose a Pokémon to transform into.";
+                    announcementEvents.announcementCounter = 0;
+                    announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                    announcementEvents.smallAnnouncement.text = "Choose a Pokémon to transform into.";
                     battleManager.abilityMode = true;
                     battleManager.abilityModeAbility = "Transform";
                 }
@@ -115,9 +107,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     {
                         // Paralyse a Pokemon
                         battleManager.abilityOverlay.SetActive(true);
-                        battleManager.announcementCounter = 0;
-                        battleManager.smallAnnouncement.gameObject.SetActive(true);
-                        battleManager.smallAnnouncement.text = "Choose a Pokémon to paralyse.";
+                        announcementEvents.announcementCounter = 0;
+                        announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                        announcementEvents.smallAnnouncement.text = "Choose a Pokémon to paralyse.";
                         battleManager.abilityMode = true;
                         battleManager.abilityModeAbility = "Paralyse";
                     }
@@ -125,9 +117,9 @@ public class DropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     {
                         // Disable a Pokemon
                         battleManager.abilityOverlay.SetActive(true);
-                        battleManager.announcementCounter = 0;
-                        battleManager.smallAnnouncement.gameObject.SetActive(true);
-                        battleManager.smallAnnouncement.text = "Choose a Pokémon to disable.";
+                        announcementEvents.announcementCounter = 0;
+                        announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                        announcementEvents.smallAnnouncement.text = "Choose a Pokémon to disable.";
                         battleManager.abilityMode = true;
                         battleManager.abilityModeAbility = "Disable";
                     }

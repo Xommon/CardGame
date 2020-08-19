@@ -116,6 +116,12 @@ TextureImporter:
   - first:
       213: -3838669588661335657
     second: Sound
+  - first:
+      213: 234234663332320361
+    second: Cosmic
+  - first:
+      213: -2002665116819515387
+    second: Bug
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -137,6 +143,7 @@ TextureImporter:
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -171,6 +178,7 @@ TextureImporter:
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
   applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
@@ -237,13 +245,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bug
+      name: Cosmic
       rect:
         serializedVersion: 2
-        x: 4
-        y: 614
-        width: 249
-        height: 81
+        x: 257
+        y: 104
+        width: 247
+        height: 82
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -263,7 +271,7 @@ TextureImporter:
         serializedVersion: 2
         x: 257
         y: 613
-        width: 249
+        width: 247
         height: 82
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -631,6 +639,27 @@ TextureImporter:
       bones: []
       spriteID: 7990fb5e85e4abac0800000000000000
       internalID: -3838669588661335657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bug
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 614
+        width: 247
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50818e3dfaa1534e0800000000000000
+      internalID: -2002665116819515387
       vertices: []
       indices: 
       edges: []

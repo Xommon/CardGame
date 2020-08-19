@@ -36,6 +36,11 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public string weakness;
     public string resistance;
     public List<Sprite> forms;
+    public WeatherManager weatherManager;
+    public TypeMatchups typeMatchups;
+    public DamageSystem damageSystem;
+    public DeckManager deckManager;
+    public AnnouncementEvents announcementEvents;
 
     // Abilities
     public GameObject guardEffect;
@@ -53,12 +58,51 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool transformed;
     public Card transformOriginalCard;
     public bool wonderGuarded;
+    public Dictionary<string, Color32> typeColours = new Dictionary<string, Color32>()
+    {
+        { "Bug", new Color32(170, 240, 90, 255) },
+        { "Cosmic", new Color32(50, 15, 150, 255) },
+        { "Dark", new Color32(25, 25, 25, 255) },
+        { "Dragon", new Color32(84, 38, 183, 255) },
+        { "Electric", new Color32(222, 207, 37, 255) },
+        { "Fairy", new Color32(255, 65, 220, 255) },
+        { "Fighting", new Color32(94, 31, 12, 255) },
+        { "Fire", new Color32(255, 33, 28, 255) },
+        { "Flying", new Color32(153, 138, 255, 255) },
+        { "Ghost", new Color32(51, 31, 75, 255) },
+        { "Grass", new Color32(75, 255, 55, 255) },
+        { "Ground", new Color32(226, 181, 97, 255) },
+        { "Ice", new Color32(67, 255, 255, 255) },
+        { "Normal", new Color32(205, 184, 144, 255) },
+        { "Poison", new Color32(97, 21, 62, 255) },
+        { "Psychic", new Color32(255, 50, 123, 255) },
+        { "Rock", new Color32(162, 94, 45, 255) },
+        { "Sound", new Color32(255, 137, 0, 255) },
+        { "Steel", new Color32(142, 142, 142, 255) },
+        { "Water", new Color32(62, 158, 255, 255) },
+    };
+    public Dictionary<WeatherManager.Weather, string[]> typesAffectedByWeather = new Dictionary<WeatherManager.Weather, string[]>()
+    {
+        { WeatherManager.Weather.Clear, new string[]{"Normal", ""} },
+        { WeatherManager.Weather.Sunny, new string[]{"Fire", "Grass"} },
+        { WeatherManager.Weather.Rainy, new string[]{"Water", ""} },
+        { WeatherManager.Weather.Snowy, new string[]{"Ice", ""} },
+        { WeatherManager.Weather.Sandstorm, new string[]{"Ground", "Rock"} },
+        { WeatherManager.Weather.Stormy, new string[]{"Electric", ""} },
+        { WeatherManager.Weather.Cloudy, new string[]{"Dark", ""} },
+        { WeatherManager.Weather.Windy, new string[]{"Flying", ""} },
+        { WeatherManager.Weather.MeteorShower, new string[]{"Cosmic", "Steel"} },
+    };
 
     // Start is called before the first frame update
     void Start()
     {
         // Attach the Battle Manager
         battleManager = FindObjectOfType<BattleManager>();
+        weatherManager = FindObjectOfType<WeatherManager>();
+        typeMatchups = FindObjectOfType<TypeMatchups>();
+        damageSystem = FindObjectOfType<DamageSystem>();
+        deckManager = FindObjectOfType<DeckManager>();
 
         // Starting stats
         energy = card.energy;
@@ -108,16 +152,21 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         if (ability == "Draw Card")
         {
-            battleManager.DrawCard(player);
+            deckManager.DrawCard(player);
         }
         if (ability == "AirLock" || ability == "Drought" || ability == "Flood" || ability == "Blizzard" || ability == "Sand Stream" || ability == "Stormy" || ability == "Whirlwind" || ability == "Overcast" || ability == "Meteor Shower")
         {
-            battleManager.weatherPokemon.Add(this);
+            weatherManager.weatherPokemon.Add(this);
         }
         if (ability == "Wonder Guard")
         {
             wonderGuarded = true;
         }
+
+        // Set weakness, resistance, and game piece colour
+        weakness = typeMatchups.GetWeakness(type);
+        resistance = typeMatchups.GetResistance(type);
+        backgroundImage.color = typeColours[type];
     }
     
     void FixedUpdate()
@@ -215,151 +264,9 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             type = card.type;
         }
-        if (type == "Bug")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(170, 240, 90, 255);
-            weakness = "Flying";
-            resistance = "";
-        }
-        else if (type == "Dark")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(25, 25, 25, 255);
-            weakness = "Sound";
-            resistance = "Psychic";
-        }
-        else if (type == "Dragon")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(84, 38, 183, 255);
-            weakness = "Fairy";
-            resistance = "";
-        }
-        else if (type == "Electric")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(222, 207, 37, 255);
-            weakness = "Ground";
-            resistance = "";
-        }
-        else if (type == "Fairy")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(255, 65, 220, 255);
-            weakness = "Poison";
-            resistance = "Dragon";
-        }
-        else if (type == "Fighting")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(94, 31, 12, 255);
-            weakness = "Psychic";
-            resistance = "";
-        }
-        else if (type == "Fire")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(255, 33, 28, 255);
-            weakness = "Water";
-            resistance = "";
-        }
-        else if (type == "Flying")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(153, 138, 255, 255);
-            weakness = "Ice";
-            resistance = "Ground";
-        }
-        else if (type == "Ghost")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(51, 31, 75, 255);
-            weakness = "Dark";
-            resistance = "Normal";
-        }
-        else if (type == "Grass")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(75, 255, 55, 255);
-            weakness = "Fire";
-            resistance = "";
-        }
-        else if (type == "Ground")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(226, 181, 97, 255);
-            weakness = "Grass";
-            resistance = "Electric";
-        }
-        else if (type == "Ice")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(67, 255, 255, 255);
-            weakness = "Fire";
-            resistance = "";
-        }
-        else if (type == "Normal")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(205, 184, 144, 255);
-            weakness = "Fighting";
-            resistance = "Ghost";
-        }
-        else if (type == "Poison")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(97, 21, 62, 255);
-            weakness = "Psychic";
-            resistance = "";
-        }
-        else if (type == "Psychic")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(255, 50, 123, 255);
-            weakness = "Bug";
-            resistance = "Fighting";
-        }
-        else if (type == "Rock")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(162, 94, 45, 255);
-            weakness = "Water";
-            resistance = "";
-        }
-        else if (type == "Steel")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(142, 142, 142, 255);
-            weakness = "Ground";
-            resistance = "Poison";
-        }
-        else if (type == "Water")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(62, 158, 255, 255);
-            weakness = "Electric";
-            resistance = "";
-        }
-        else if (type == "Sound")
-        {
-            backgroundImage.GetComponent<Image>().color = new Color32(255, 137, 0, 255);
-            weakness = "Rock";
-            resistance = "Sound";
-        }
 
-        // Weather effects
-        if (battleManager.weather == BattleManager.Weather.Sunny && type == "Fire")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Rainy && type == "Water")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Snowy && type == "Ice")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Sandstorm && (type == "Ground" || type == "Rock"))
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Stormy && type == "Electric")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Windy && type == "Flying")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.Cloudy && type == "Dark")
-        {
-            weatherAttackBoost = 2;
-        }
-        else if (battleManager.weather == BattleManager.Weather.MeteorShower && type == "Steel")
+        // Weather effects on attack
+        if (type != "Normal" && type == typesAffectedByWeather[weatherManager.weather][0] || type == typesAffectedByWeather[weatherManager.weather][1])
         {
             weatherAttackBoost = 2;
         }
@@ -370,51 +277,8 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         if (ability == "Forecast")
         {
-            if (battleManager.weather == BattleManager.Weather.Clear)
-            {
-                type = "Normal";
-                PokemonImage.sprite = forms[0];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Sunny)
-            {
-                type = "Fire";
-                PokemonImage.sprite = forms[1];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Rainy)
-            {
-                type = "Water";
-                PokemonImage.sprite = forms[2];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Snowy)
-            {
-                type = "Ice";
-                PokemonImage.sprite = forms[3];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Sandstorm)
-            {
-                type = "Ground";
-                PokemonImage.sprite = forms[4];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Stormy)
-            {
-                type = "Electric";
-                PokemonImage.sprite = forms[5];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Windy)
-            {
-                type = "Flying";
-                PokemonImage.sprite = forms[6];
-            }
-            else if (battleManager.weather == BattleManager.Weather.Cloudy)
-            {
-                type = "Dark";
-                PokemonImage.sprite = forms[7];
-            }
-            else if (battleManager.weather == BattleManager.Weather.MeteorShower)
-            {
-                type = "Steel";
-                PokemonImage.sprite = forms[7];
-            }
+            type = typesAffectedByWeather[weatherManager.weather][0];
+            PokemonImage.sprite = forms[weatherManager.spriteIndexByWeather[weatherManager.weather]];
         }
 
         // Update stats on card
@@ -504,7 +368,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                     gameObject.GetComponent<Animator>().enabled = true;
                     damaged = true;
 
-                    if (counter >= 140)
+                    if (counter >= 130)
                     {
                         // The Pokemon has been knocked out
                         if (card.ability == "Explosive" && !disabled)
@@ -514,7 +378,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                             {
                                 if (battleManager.player1_BattleField[i].health > 0)
                                 {
-                                    battleManager.Damage(battleManager.player1_BattleField[i], card.attack);
+                                    damageSystem.Damage(battleManager.player1_BattleField[i], card.attack);
                                 }
                             }
 
@@ -523,13 +387,13 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                             {
                                 if (battleManager.player2_BattleField[i].health > 0)
                                 {
-                                    battleManager.Damage(battleManager.player2_BattleField[i], card.attack);
+                                    damageSystem.Damage(battleManager.player2_BattleField[i], card.attack);
                                 }
                             }
 
                             // Damage both of the players
-                            battleManager.Damage(battleManager.player1_Trainer, card.attack);
-                            battleManager.Damage(battleManager.player2_Trainer, card.attack);
+                            damageSystem.Damage(battleManager.player1_Trainer, card.attack);
+                            damageSystem.Damage(battleManager.player2_Trainer, card.attack);
                         }
 
                         if (player == 1)
@@ -563,7 +427,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
                         // Destroy object
                         damaged = false;
-                        battleManager.attackInProgress = false;
+                        damageSystem.attackInProgress = false;
                         if (name == "Player1Trainer")
                         {
                             battleManager.winner = 2;
@@ -580,7 +444,7 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 else
                 {
                     damaged = false;
-                    battleManager.attackInProgress = false;
+                    damageSystem.attackInProgress = false;
                 }
             }
         }
@@ -679,15 +543,15 @@ public class GamePiece : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                     {
                         if (eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>().targetable)
                         {
-                            battleManager.Attack(battleManager.selectedGamePiece, eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>());
+                            damageSystem.Attack(battleManager.selectedGamePiece, eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>());
                         }
                         else
                         {
                             if (eventData.pointerPress.transform.gameObject.GetComponent<GamePiece>().player == 2)
                             {
-                                battleManager.announcementCounter = 0;
-                                battleManager.smallAnnouncement.gameObject.SetActive(true);
-                                battleManager.smallAnnouncement.text = "You must attack guarding Pokémon first.";
+                                announcementEvents.announcementCounter = 0;
+                                announcementEvents.smallAnnouncement.gameObject.SetActive(true);
+                                announcementEvents.smallAnnouncement.text = "You must attack guarding Pokémon first.";
                             }
                         }
                     }

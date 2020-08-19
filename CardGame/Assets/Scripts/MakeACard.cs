@@ -41,15 +41,15 @@ public class MakeACard : MonoBehaviour
     public int backgroundImage;
     public int type;
     public List<string> types = new List<string>();
-    public List<Sprite> typeSprites = new List<Sprite>();
-    public int ability;
     public List<string> abilities = new List<string>();
-    public List<string> abilitiesDescriptions = new List<string>();
+    public int ability;
     public bool legendary;
     public Image weaknessDisplay;
     public Image resistanceDisplay;
     public string weaknessType;
     public string resistanceType;
+    public TypeMatchups typeMatchups;
+    public AbilityManager abilityManager;
 
     // Start is called before the first frame update
     void Start()
@@ -60,83 +60,9 @@ public class MakeACard : MonoBehaviour
         // Set default variables
         SetDefaultVariables();
 
-        /// Load options
+        // Load lists
         // Types
-        types.Add("Bug");
-        types.Add("Dark");
-        types.Add("Dragon");
-        types.Add("Electric");
-        types.Add("Fairy");
-        types.Add("Fighting");
-        types.Add("Fire");
-        types.Add("Flying");
-        types.Add("Ghost");
-        types.Add("Grass");
-        types.Add("Ground");
-        types.Add("Ice");
-        types.Add("Normal");
-        types.Add("Poison");
-        types.Add("Psychic");
-        types.Add("Rock");
-        types.Add("Sound");
-        types.Add("Steel");
-        types.Add("Water");
-
-        // Abilities
-        abilities.Add("");
-        abilities.Add("Paralyse");
-        abilities.Add("Toxic");
-        abilities.Add("Protect");
-        abilities.Add("Quick");
-        abilities.Add("Guard");
-        abilities.Add("Disable");
-        abilities.Add("Explosive");
-        abilities.Add("Heal");
-        abilities.Add("Transform");
-        abilities.Add("Convert");
-        abilities.Add("Delay");
-        //abilities.Add("Forecast");
-        abilities.Add("Drought");
-        abilities.Add("Flood");
-        abilities.Add("Sand Stream");
-        abilities.Add("Blizzard");
-        abilities.Add("Air Lock");
-        abilities.Add("Overcast");
-        abilities.Add("Stormy");
-        abilities.Add("Whirlwind");
-        //abilities.Add("Morph");
-        //abilities.Add("Wonder Guard");
-        abilities.Add("Draw Card");
-        abilities.Add("Meteor Shower");
-        abilities.Add("Run Away");
-
-        // Abilities Descriptions
-        abilitiesDescriptions.Add("");
-        abilitiesDescriptions.Add("When played, choose an opposing Pokémon to paralyse for one turn.");
-        abilitiesDescriptions.Add("Any opposing Pokémon who attacks or is attacked by this Pokémon is knocked out.");
-        abilitiesDescriptions.Add("The first attack on this Pokémon does no damage.");
-        abilitiesDescriptions.Add("This Pokémon can attack immediately after being played.");
-        abilitiesDescriptions.Add("This Pokémon must be knocked out before oppossing Pokémon can attack other friendly Pokémon.");
-        abilitiesDescriptions.Add("When played, choose an opposing Pokémon and disable its ability permanently.");
-        abilitiesDescriptions.Add("When knocked out, this Pokémon deals damage equivalent to its attack to all Pokémon and trainers on the field.");
-        abilitiesDescriptions.Add("When played, choose a friendly Pokémon to heal equal to this Pokémon's health.");
-        abilitiesDescriptions.Add("When played, choose any Pokémon to turn into.");
-        abilitiesDescriptions.Add("When played, choose any type to turn into.");
-        abilitiesDescriptions.Add("This Pokémon cannot attack for two turns once played.");
-        //abilitiesDescriptions.Add("Forecast");
-        abilitiesDescriptions.Add("The weather is always sunny while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always rainy while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always sandstorm while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always snowy while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always clear while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always cloudy while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always stormy while this Pokémon is in play.");
-        abilitiesDescriptions.Add("The weather is always windy while this Pokémon is in play.");
-        //abilitiesDescriptions.Add("Morph");
-        //abilitiesDescriptions.Add("This Pokémon can only be damaged by its weakness type.");
-        abilitiesDescriptions.Add("When played, draw a card.");
-        abilitiesDescriptions.Add("The weather is always meteor shower while this Pokémon is in play.");
-        abilitiesDescriptions.Add("When this Pokémon has 1 health remaining, it is returned to the player's hand.");
+        types = typeMatchups.types;
     }
 
     void Update()
@@ -155,22 +81,6 @@ public class MakeACard : MonoBehaviour
             createButton.interactable = true;
         }
 
-        // Disable save button if Pokemon name already exists
-        for (int i = 0; i < gameManager.allCards.Count - 1; i++)
-        {
-            if (NameSlot.text != "")
-            {
-                if (NameSlot.text == gameManager.allCards[i].name)
-                {
-                    createButton.interactable = false;
-                }
-                else
-                {
-                    createButton.interactable = true;
-                }
-            }
-        }
-
         // Set up menu displays
         if (gameManager.makeACardMenu.activeInHierarchy)
         {
@@ -179,10 +89,12 @@ public class MakeACard : MonoBehaviour
             HealthDisplay.text = health.ToString();
             ImageDisplay.sprite = pokemonSprites[pokemonImage];
             BackgroundDisplay.sprite = backgroundSprites[backgroundImage];
-            TypeDisplay.sprite = typeSprites[type];
+            TypeDisplay.sprite = typeMatchups.typesImages[type];
             AbilityDisplay.text = abilities[ability];
-            DescriptionDisplay.text = abilitiesDescriptions[ability];
-            DetermineWeaknessResistance();
+            //DescriptionDisplay.text = abilityManager.abilities[abilityManager.abilitiesList[0]][1];
+            DescriptionDisplay.text = abilityManager.abilitiesList[ability];
+            weaknessType = typeMatchups.GetWeakness(typeMatchups.types[type]);
+            resistanceType = typeMatchups.GetResistance(typeMatchups.types[type]);
         }
 
         // Enable and disable Attack buttons
@@ -276,11 +188,11 @@ public class MakeACard : MonoBehaviour
         }
 
         // Display type weakness and resistance
-        for (int i = 0; i < typeSprites.Count - 1; i++)
+        for (int i = 0; i < typeMatchups.typesImages.Count - 1; i++)
         {
-            if (typeSprites[i].name == weaknessType)
+            if (typeMatchups.typesImages[i].name == weaknessType)
             {
-                weaknessDisplay.sprite = typeSprites[i];
+                weaknessDisplay.sprite = typeMatchups.typesImages[i];
                 weaknessDisplay.color = new Color(255, 255, 255, 1);
                 break;
             }
@@ -289,11 +201,11 @@ public class MakeACard : MonoBehaviour
                 weaknessDisplay.color = new Color(255, 255, 255, 0);
             }
         }
-        for (int i = 0; i < typeSprites.Count - 1; i++)
+        for (int i = 0; i < typeMatchups.typesImages.Count - 1; i++)
         {
-            if (typeSprites[i].name == resistanceType)
+            if (typeMatchups.typesImages[i].name == resistanceType)
             {
-                resistanceDisplay.sprite = typeSprites[i];
+                resistanceDisplay.sprite = typeMatchups.typesImages[i];
                 resistanceDisplay.color = new Color(255, 255, 255, 1);
                 break;
             }
@@ -331,13 +243,15 @@ public class MakeACard : MonoBehaviour
     public void TypePlus()
     {
         type += 1;
-        DetermineWeaknessResistance();
+        weaknessType = typeMatchups.GetWeakness(typeMatchups.types[type]);
+        resistanceType = typeMatchups.GetResistance(typeMatchups.types[type]);
     }
 
     public void TypeMinus()
     {
         type -= 1;
-        DetermineWeaknessResistance();
+        weaknessType = typeMatchups.GetWeakness(typeMatchups.types[type]);
+        resistanceType = typeMatchups.GetResistance(typeMatchups.types[type]);
     }
 
     public void AbilityPlus()
@@ -431,106 +345,6 @@ public class MakeACard : MonoBehaviour
         else
         {
             legendary = false;
-        }
-    }
-
-    public void DetermineWeaknessResistance()
-    {
-        // Determine card's weakness and resistance
-        if (type == 0)
-        {
-            weaknessType = "Flying";
-            resistanceType = "";
-        }
-        else if (type == 1)
-        {
-            weaknessType = "Sound";
-            resistanceType = "Psychic";
-        }
-        else if (type == 2)
-        {
-            weaknessType = "Fairy";
-            resistanceType = "";
-        }
-        else if (type == 3)
-        {
-            weaknessType = "Ground";
-            resistanceType = "";
-        }
-        else if (type == 4)
-        {
-            weaknessType = "Poison";
-            resistanceType = "Dragon";
-        }
-        else if (type == 5)
-        {
-            weaknessType = "Psychic";
-            resistanceType = "";
-        }
-        else if (type == 6)
-        {
-            weaknessType = "Water";
-            resistanceType = "";
-        }
-        else if (type == 7)
-        {
-            weaknessType = "Ice";
-            resistanceType = "Ground";
-        }
-        else if (type == 8)
-        {
-            weaknessType = "Dark";
-            resistanceType = "Normal";
-        }
-        else if (type == 9)
-        {
-            weaknessType = "Fire";
-            resistanceType = "";
-        }
-        else if (type == 10)
-        {
-            weaknessType = "Grass";
-            resistanceType = "Electric";
-        }
-        else if (type == 11)
-        {
-            weaknessType = "Fire";
-            resistanceType = "";
-        }
-        else if (type == 12)
-        {
-            weaknessType = "Fighting";
-            resistanceType = "";
-        }
-        else if (type == 13)
-        {
-            weaknessType = "Psychic";
-            resistanceType = "";
-        }
-        else if (type == 14)
-        {
-            weaknessType = "Bug";
-            resistanceType = "Fighting";
-        }
-        else if (type == 15)
-        {
-            weaknessType = "Water";
-            resistanceType = "";
-        }
-        else if (type == 16)
-        {
-            weaknessType = "Rock";
-            resistanceType = "Sound";
-        }
-        else if (type == 17)
-        {
-            weaknessType = "Ground";
-            resistanceType = "Poison";
-        }
-        else if (type == 18)
-        {
-            weaknessType = "Electric";
-            resistanceType = "";
         }
     }
 

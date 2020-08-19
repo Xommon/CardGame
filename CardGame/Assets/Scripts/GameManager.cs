@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
 
     // Scripts
     public BattleManager battleManager;
+    public AnnouncementEvents announcementEvents;
+    public DeckManager deckManager;
 
     // Start is called before the first frame update
     void Start()
@@ -72,7 +74,6 @@ public class GameManager : MonoBehaviour
         {
             deckMenu.SetActive(true);
             deckBackButton.SetActive(false);
-            //deckEditButton.SetActive(false);
         }
         else // Otherwise, open the main menu
         {
@@ -464,26 +465,7 @@ public class GameManager : MonoBehaviour
 
     public void PopulateCardDatabase()
     {
-        // Add custom cards to card database
-        /*string[] customCards = AssetDatabase.FindAssets("", new[] { "Cards/Custom" });
-        for (int i = 0; i < 3; i++)
-        {
-            allCards.Add(customCards[0]);
-        }*/
-
         // Populate the database with all of the custom cards
-        for (int i = 0; i < 250; i++)
-        {
-            // Get the names of all of the default cards so they're not accidentally readded
-            //List<string> namesToAvoid = new List<string>();
-            //namesToAvoid.Add(allCards[i].name);
-        }
-        for (int i = 0; i < 250; i++)
-        {
-            // Add the cards that are not part of the default cards list
-            //allCards.Add(AssetDatabase.FindAssets());
-            //namesToAvoid.Add(allCards[i].name);
-        }
         for (int i = 0; i < allCards.Count; i++)
         {
             // Address the specific PokemonEntry
@@ -514,30 +496,30 @@ public class GameManager : MonoBehaviour
     public void PlayButton()
     {
         // Transfer the current deck to the battle manager
-        battleManager.player1_BattleDeck.Clear();
-        battleManager.player2_BattleDeck.Clear();
+        deckManager.player1_BattleDeck.Clear();
+        deckManager.player2_BattleDeck.Clear();
         for (int i = 0; i < 30; i++)
         {
             if (currentDeck == 1)
             {
-                battleManager.player1_BattleDeck.Add(deck1[i]);
+                deckManager.player1_BattleDeck.Add(deck1[i]);
             }
             else if (currentDeck == 2)
             {
-                battleManager.player1_BattleDeck.Add(deck2[i]);
+                deckManager.player1_BattleDeck.Add(deck2[i]);
             }
             else if (currentDeck == 3)
             {
-                battleManager.player1_BattleDeck.Add(deck3[i]);
+                deckManager.player1_BattleDeck.Add(deck3[i]);
             }
 
             if (deck3.Count == 30)
             {
-                battleManager.player2_BattleDeck.Add(deck3[i]);
+                deckManager.player2_BattleDeck.Add(deck3[i]);
             }
             else
             {
-                battleManager.player2_BattleDeck.Add(aiDeck[i]);
+                deckManager.player2_BattleDeck.Add(aiDeck[i]);
             }
         }
 

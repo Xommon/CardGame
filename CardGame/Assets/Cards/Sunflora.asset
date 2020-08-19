@@ -20,7 +20,7 @@ MonoBehaviour:
   sprite: {fileID: 1726459066035224646, guid: 0fd5935929fe301498db844cc648515c, type: 3}
   background: {fileID: -993980237756161973, guid: 7189db2886652d0489ae218c16fb2b10,
     type: 3}
-  attack: 4
+  attack: 3
   health: 4
   energy: 4
   ability: Drought

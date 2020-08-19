@@ -22,12 +22,21 @@ public class CardFace : MonoBehaviour
     public TextMeshProUGUI energyText;
     public string weaknessType;
     public string resistanceType;
+    public GameManager gameManager;
+    public BattleManager battleManager;
+    public TypeMatchups typeMatchups;
 
-    // Start is called before the first frame update
+    void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        battleManager = gameManager.GetComponent<BattleManager>();
+        typeMatchups = gameManager.GetComponent<TypeMatchups>();
+    }
+
     void FixedUpdate()
     {
         // Destroy self once game has been quit
-        if (FindObjectOfType<BattleManager>().quitGame && name != "CardDisplay")
+        if (battleManager.quitGame && name != "CardDisplay")
         {
             Destroy(gameObject);
         }
@@ -56,100 +65,7 @@ public class CardFace : MonoBehaviour
         remainingHealth = card.health;
 
         // Determine card's weakness and resistance
-        if (card.type == "Bug")
-        {
-            weaknessType = "Flying";
-            resistanceType = "";
-        }
-        else if (card.type == "Dark")
-        {
-            weaknessType = "Bug";
-            resistanceType = "Psychic";
-        }
-        else if (card.type == "Dragon")
-        {
-            weaknessType = "Fairy";
-            resistanceType = "";
-        }
-        else if (card.type == "Electric")
-        {
-            weaknessType = "Ground";
-            resistanceType = "";
-        }
-        else if (card.type == "Fairy")
-        {
-            weaknessType = "Poison";
-            resistanceType = "Dragon";
-        }
-        else if (card.type == "Fighting")
-        {
-            weaknessType = "Psychic";
-            resistanceType = "";
-        }
-        else if (card.type == "Fire")
-        {
-            weaknessType = "Water";
-            resistanceType = "";
-        }
-        else if (card.type == "Flying")
-        {
-            weaknessType = "Ice";
-            resistanceType = "Ground";
-        }
-        else if (card.type == "Ghost")
-        {
-            weaknessType = "Dark";
-            resistanceType = "Normal";
-        }
-        else if (card.type == "Grass")
-        {
-            weaknessType = "Fire";
-            resistanceType = "";
-        }
-        else if (card.type == "Ground")
-        {
-            weaknessType = "Grass";
-            resistanceType = "Electric";
-        }
-        else if (card.type == "Ice")
-        {
-            weaknessType = "Fire";
-            resistanceType = "";
-        }
-        else if (card.type == "Normal")
-        {
-            weaknessType = "Fighting";
-            resistanceType = "";
-        }
-        else if (card.type == "Poison")
-        {
-            weaknessType = "Psychic";
-            resistanceType = "";
-        }
-        else if (card.type == "Psychic")
-        {
-            weaknessType = "Bug";
-            resistanceType = "Fighting";
-        }
-        else if (card.type == "Rock")
-        {
-            weaknessType = "Water";
-            resistanceType = "";
-        }
-        else if (card.type == "Steel")
-        {
-            weaknessType = "Ground";
-            resistanceType = "Poison";
-        }
-        else if (card.type == "Water")
-        {
-            weaknessType = "Electric";
-            resistanceType = "";
-        }
-        else if (card.type == "Sound")
-        {
-            weaknessType = "Rock";
-            resistanceType = "Sound";
-        }
+        weaknessType = typeMatchups.GetWeakness(card.type);
+        resistanceType = typeMatchups.GetResistance(card.type);
     }
 }
